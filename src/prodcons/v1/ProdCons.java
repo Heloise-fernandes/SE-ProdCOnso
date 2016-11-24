@@ -45,10 +45,13 @@ public class ProdCons implements Tampon{
 		{
 			wait();
 		}
-		this.pointeurLecture++;
-		Message m = this.buffer[this.pointeurLecture];
-		this.incrementerLecture();
-		return m;
+		synchronized (arg0) {
+			this.pointeurLecture++;
+			Message m = this.buffer[this.pointeurLecture];
+			this.incrementerLecture();
+			this.lecture--;
+			return m;
+		}
 	}
 
 	@Override
@@ -58,10 +61,13 @@ public class ProdCons implements Tampon{
 		{
 			wait();
 		}
-		this.ecriture++;
-		this.buffer[this.pointeurEcriture]  = arg1;
-		this.incrementerEcriture();
-		
+		synchronized (arg0) {
+			this.ecriture++;
+			this.buffer[this.pointeurEcriture]  = arg1;
+			this.incrementerEcriture();
+			this.ecriture--;
+		}
+				
 	}
 
 	@Override

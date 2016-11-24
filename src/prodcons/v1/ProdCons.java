@@ -39,35 +39,35 @@ public class ProdCons implements Tampon{
 	}
 
 	@Override
-	public Message get(_Consommateur arg0) throws Exception, InterruptedException {
+	public synchronized Message get(_Consommateur arg0) throws Exception, InterruptedException {
 		
 		while((this.lecture!=0)||(this.pointeurEcriture == this.pointeurLecture))
 		{
 			wait();
 		}
-		synchronized (arg0) {
-			this.pointeurLecture++;
-			Message m = this.buffer[this.pointeurLecture];
-			this.incrementerLecture();
-			this.lecture--;
-			return m;
-		}
+		
+		this.pointeurLecture++;
+		Message m = this.buffer[this.pointeurLecture];
+		this.incrementerLecture();
+		this.lecture--;
+		this.notifyAll();
+		return m;
+
 	}
 
 	@Override
-	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
+	public synchronized void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		
 		while((this.ecriture!=0)||(this.pointeurEcriture == this.pointeurLecture))
 		{
 			wait();
 		}
-		synchronized (arg0) {
-			this.ecriture++;
-			this.buffer[this.pointeurEcriture]  = arg1;
-			this.incrementerEcriture();
-			this.ecriture--;
-		}
-				
+		this.ecriture++;
+		this.buffer[this.pointeurEcriture]  = arg1;
+		this.incrementerEcriture();
+		this.ecriture--;
+		this.notifyAll();
+			
 	}
 
 	@Override

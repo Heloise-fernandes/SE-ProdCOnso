@@ -11,12 +11,13 @@ import jus.poc.prodcons._Producteur;
 public class Producteur extends Acteur implements _Producteur{
 	
 	int nbMessage;
-
-	protected Producteur( Observateur observateur, int moyenneTempsDeTraitement,int deviationTempsDeTraitement, int nbMoyenProducteur, int derivationProd) throws ControlException {
+	ProdCons buffer;
+	protected Producteur( Observateur observateur, int moyenneTempsDeTraitement,int deviationTempsDeTraitement, int nbMoyenProducteur, int derivationProd, ProdCons b) throws ControlException {
 		super(Acteur.typeProducteur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		//TODO : Generer nbMessage à produire
 		Aleatoire alea = new Aleatoire(nbMoyenProducteur, derivationProd);
 		this.nbMessage = alea.next();
+		this.buffer = 
 		
 	}
 

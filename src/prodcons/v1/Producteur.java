@@ -17,7 +17,7 @@ public class Producteur extends Acteur implements _Producteur{
 		//TODO : Generer nbMessage à produire
 		Aleatoire alea = new Aleatoire(nbMoyenProducteur, derivationProd);
 		this.nbMessage = alea.next();
-		this.buffer = 
+		this.buffer = b;
 		
 	}
 

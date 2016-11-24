@@ -10,7 +10,6 @@ public class Consommateur extends Acteur implements _Consommateur {
 	
 
 	int nbMessage;
-	int numConso;
 	ProdCons buffer;
 	
 	protected Consommateur(int type, Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {

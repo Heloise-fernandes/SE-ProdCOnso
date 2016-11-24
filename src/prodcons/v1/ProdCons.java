@@ -35,7 +35,7 @@ public class ProdCons implements Tampon{
 
 	@Override
 	public Message get(_Consommateur arg0) throws Exception, InterruptedException {
-		(Consommateur arg0).incrementerNBMessage();
+		
 		Message m = this.buffer[this.pointeurLecture];
 		this.incrementerLecture();
 		return m;
@@ -43,7 +43,7 @@ public class ProdCons implements Tampon{
 
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
-		(Producteur arg0).decrementeMessage();
+		
 		this.buffer[this.pointeurEcriture]  = arg1;
 		this.incrementerEcriture();
 		

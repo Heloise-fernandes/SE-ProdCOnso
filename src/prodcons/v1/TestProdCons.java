@@ -20,4 +20,14 @@ public class TestProdCons extends Simulateur {
 		//new TestProdCons(new Observateur()).start();
 	}
 
+	
+	public synchronized void consommer()
+	{
+		
+	}
+	
+	public synchronized void produire()
+	{
+		
+	}
 }

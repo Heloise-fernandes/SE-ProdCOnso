@@ -1,5 +1,6 @@
 package prodcons.v1;
 
+import jus.poc.prodcons.Message;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons.Acteur;
 import jus.poc.prodcons.ControlException;
@@ -8,22 +9,37 @@ import jus.poc.prodcons.Observateur;
 public class Consommateur extends Acteur implements _Consommateur {
 	
 
-	protected Consommateur(int type, Observateur observateur, int moyenneTempsDeTraitement,
-			int deviationTempsDeTraitement) throws ControlException {
+	int nbMessage;
+	int numConso;
+	ProdCons buffer;
+	
+	protected Consommateur(int type, Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
 		super(type, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
-		// TODO Auto-generated constructor stub
+		this.buffer = b;
+		this.nbMessage = 0;
 	}
 
 	@Override
 	public int nombreDeMessages() {
-		// TODO Auto-generated method stub
-		return 0;
+		return nbMessage;
 	}
 
+	public void incrementer()
+	{
+		this.nbMessage = 0;
+	}
+	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		
+		try 
+		{
+			Message m = this.buffer.get(this);
+			//TODO : imprimer message
+			this.incrementer();
+		} catch (Exception e) {e.printStackTrace();}
 	}
+	
+	
 
 }

@@ -10,6 +10,9 @@ public class ProdCons implements Tampon{
 
 	private int pointeurEcriture;
 	private int pointeurLecture;
+	private int ecriture;
+	private int lecture;
+	
 	private Message[] buffer;
 	
 	public ProdCons(int N) 
@@ -17,6 +20,8 @@ public class ProdCons implements Tampon{
 		this.buffer = new Message[N];
 		this.pointeurEcriture = 0;
 		this.pointeurLecture = 0;
+		this.ecriture = 0;
+		this.lecture = 0;
 	}
 	
 	@Override
@@ -36,6 +41,11 @@ public class ProdCons implements Tampon{
 	@Override
 	public Message get(_Consommateur arg0) throws Exception, InterruptedException {
 		
+		while((this.lecture!=0)||(this.pointeurEcriture == this.pointeurLecture))
+		{
+			wait();
+		}
+		this.pointeurLecture++;
 		Message m = this.buffer[this.pointeurLecture];
 		this.incrementerLecture();
 		return m;
@@ -44,6 +54,11 @@ public class ProdCons implements Tampon{
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		
+		while((this.ecriture!=0)||(this.pointeurEcriture == this.pointeurLecture))
+		{
+			wait();
+		}
+		this.ecriture++;
 		this.buffer[this.pointeurEcriture]  = arg1;
 		this.incrementerEcriture();
 		

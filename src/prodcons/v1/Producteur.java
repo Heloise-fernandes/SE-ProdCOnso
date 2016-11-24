@@ -6,6 +6,8 @@ import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons._Producteur;
 
 public class Producteur extends Acteur implements _Producteur{
+	
+	int nbMessage;
 
 	protected Producteur(int type, Observateur observateur, int moyenneTempsDeTraitement,int deviationTempsDeTraitement) throws ControlException {
 		super(type, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
@@ -15,7 +17,7 @@ public class Producteur extends Acteur implements _Producteur{
 	@Override
 	public int nombreDeMessages() {
 		
-		return 0;
+		return this.nbMessage;
 	}
 
 }

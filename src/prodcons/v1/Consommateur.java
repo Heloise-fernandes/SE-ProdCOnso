@@ -6,6 +6,7 @@ import jus.poc.prodcons.ControlException;
 import jus.poc.prodcons.Observateur;
 
 public class Consommateur extends Acteur implements _Consommateur {
+	
 
 	protected Consommateur(int type, Observateur observateur, int moyenneTempsDeTraitement,
 			int deviationTempsDeTraitement) throws ControlException {

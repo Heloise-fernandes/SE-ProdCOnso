@@ -12,8 +12,8 @@ public class Consommateur extends Acteur implements _Consommateur {
 	int nbMessage;
 	ProdCons buffer;
 	
-	protected Consommateur(int type, Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
-		super(type, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
+	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
+		super(Acteur.typeConsommateur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.buffer = b;
 		this.nbMessage = 0;
 	}
@@ -25,7 +25,7 @@ public class Consommateur extends Acteur implements _Consommateur {
 
 	public void incrementer()
 	{
-		this.nbMessage = 0;
+		this.nbMessage++;
 	}
 	
 	@Override

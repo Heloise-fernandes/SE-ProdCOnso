@@ -12,6 +12,7 @@ public class ProdCons implements Tampon{
 	private int pointeurLecture;
 	private int ecriture;
 	private int lecture;
+	public TestProdCons test;
 	
 	private Message[] buffer;
 	
@@ -22,6 +23,7 @@ public class ProdCons implements Tampon{
 		this.pointeurLecture = 0;
 		this.ecriture = 0;
 		this.lecture = 0;
+		this.test = new TestProdCons(observateur);
 	}
 	
 	@Override
@@ -41,13 +43,14 @@ public class ProdCons implements Tampon{
 	@Override
 	public synchronized Message get(_Consommateur arg0) throws Exception, InterruptedException {
 		
-		while((this.lecture!=0)||(this.pointeurEcriture == this.pointeurLecture))
+		while((this.lecture!=0)||(this.pointeurEcriture == this.pointeurLecture)||(this.buffer[this.pointeurLecture]==null))
 		{
 			wait();
 		}
 		
 		this.pointeurLecture++;
 		Message m = this.buffer[this.pointeurLecture];
+		this.buffer[this.pointeurLecture] = null;
 		this.incrementerLecture();
 		this.lecture--;
 		this.notifyAll();
@@ -58,7 +61,7 @@ public class ProdCons implements Tampon{
 	@Override
 	public synchronized void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		
-		while((this.ecriture!=0)||(this.pointeurEcriture == this.pointeurLecture))
+		while((this.ecriture!=0)||(this.pointeurEcriture == this.pointeurLecture)||(this.buffer[this.pointeurEcriture]!=null))
 		{
 			wait();
 		}

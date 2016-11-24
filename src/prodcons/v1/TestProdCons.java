@@ -1,13 +1,21 @@
 package prodcons.v1;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons.Simulateur;
 
 public class TestProdCons extends Simulateur {
 
+	public Producteur[] listProducteur;
+	public Consommateur[] listConsommateur;
+	
+	
 	public TestProdCons(Observateur observateur) {
 		super(observateur);
-		// TODO Auto-generated constructor stub
+		this.listConsommateur = new Consommateur[/*Conso*/];
+		this.listProducteur = new Producteur[/*Prod*/];
 	}
 
 	@Override

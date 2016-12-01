@@ -69,7 +69,7 @@ public class TestProdCons extends Simulateur {
 			init("options.xml");
 		}
 		
-		new TestProdCons(new Observateur(),new ProdCons(TAILLE_BUFFER)).start();
+		new TestProdCons(new Observateur(),new ProdCons(TAILLE_BUFFER,nbProd)).start();
 	}
 	
 	protected static int nbProd;

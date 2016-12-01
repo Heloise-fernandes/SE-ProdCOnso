@@ -46,6 +46,8 @@ public class Producteur extends Acteur implements _Producteur{
 				this.idMsg++;
 			} catch (Exception e) {e.printStackTrace();}
 		}
+		this.buffer.decrementeNbProducteur();
+		System.out.println("Fin producteur"+identification());
 	}
 
 }

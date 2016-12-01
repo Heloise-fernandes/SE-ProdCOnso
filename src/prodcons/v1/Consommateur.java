@@ -40,8 +40,11 @@ public class Consommateur extends Acteur implements _Consommateur {
 				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
 				System.out.println(m);
 				this.incrementer();
-			} catch (Exception e) {e.printStackTrace();}
+			}
+			catch (PlusDeProdException e) {break;}
+			catch (Exception e) {e.printStackTrace();}
 		}
+		System.out.println("Fin consomateur"+identification());
 	}
 	
 	

@@ -49,7 +49,7 @@ public class ProdCons implements Tampon{
 		
 		while((this.pointeurEcriture == this.pointeurLecture)||(this.buffer[this.pointeurLecture]==null))
 		{
-			System.out.println("Consommateur : "+ arg0.identification()+ " attend, (ecriture = consomateur) : "+(this.pointeurEcriture == this.pointeurLecture)+" null? : "+(this.buffer[this.pointeurLecture]==null));
+			System.out.println("Consommateur : "+ arg0.identification()+ " attend, (ecriture = consomateur) : "+(this.pointeurEcriture == this.pointeurLecture)+" value? : "+this.buffer[this.pointeurLecture]);
 			if((this.nbProd==0)&&(this.buffer[this.pointeurLecture]!=null))
 			{
 				System.out.println("Consommateur : "+ arg0.identification()+ " crève");
@@ -57,9 +57,8 @@ public class ProdCons implements Tampon{
 			}
 			wait();
 		}
-		System.out.println("Consommateur : "+ arg0.identification()+ " passe le get");
-		
-		this.pointeurLecture++;
+		System.out.println("Consommateur : "+ arg0.identification()+ " passe le get"+" value? : "+this.buffer[this.pointeurLecture]);
+	
 		Message m = this.buffer[this.pointeurLecture];
 		this.buffer[this.pointeurLecture] = null;
 		this.incrementerLecture();
@@ -78,11 +77,11 @@ public class ProdCons implements Tampon{
 		
 		while(this.buffer[this.pointeurEcriture]!=null)//this.pointeurEcriture==this.buffer.length
 		{
-			System.out.println("Producteur : "+ arg0.identification() + " attend, null? : "+(this.buffer[this.pointeurEcriture]==null));
+			System.out.println("Producteur : "+ arg0.identification() + " attend, value? : "+this.buffer[this.pointeurEcriture]);
 			wait();
 		}
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " fait un put");
+		System.out.println("Producteur : "+ arg0.identification()+ " fait un put"+" value? : "+this.buffer[this.pointeurLecture]);
 		this.ecriture++;
 		this.buffer[this.pointeurEcriture]  = arg1;
 		this.incrementerEcriture();

@@ -1,4 +1,4 @@
-package prodcons.v2;
+package prodcons.v4;
 
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;
@@ -58,17 +58,32 @@ public class ProdCons implements Tampon{
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente notEmpty");
 		notEmpty.p();
 		//notFull.p();
-		System.out.println("Consommateur : "+ arg0.identification()+ " passe le notEmpty");
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente mutex");
 		mutex.p();
-		System.out.println("Consommateur : "+ arg0.identification()+ " passe le mutex");
-		Message m = this.buffer[lecture];
-		this.buffer[lecture] = null;
-		this.lecture = (lecture + 1) %buffer.length;
+		System.out.println("Consommateur : "+ arg0.identification()+ " get message");
+		
+		MessageX m = (MessageX) this.buffer[lecture];
+		int restant = m.getNbRestant();
+		if(restant==1)
+		{
+			System.out.println("==> Last message");
+			this.buffer[lecture] = null;
+			this.lecture = (lecture + 1) %buffer.length;
+		}
+		else
+		{
+			System.out.println("==> - message");
+			m.moinsUnMessage();
+		}
 		mutex.v();
-		System.out.println("Consommateur : "+ arg0.identification()+ " libère le mutex");
-		notFull.v();
-		System.out.println("Consommateur : "+ arg0.identification()+ " libere le notFull");
+		
+		mutex.p();
+		if(restant==1)
+		{
+			System.out.println("Consommateur : "+ arg0.identification()+ " libère full");
+			notFull.v();
+		}
+		mutex.v();
 		return m;
 
 	}
@@ -86,7 +101,7 @@ public class ProdCons implements Tampon{
 		notEmpty.v();
 		//notFull.v();
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " fini");
+		System.out.println("Producteur : "+ arg0.identification()+ "A écrit");
 		
 	}
 

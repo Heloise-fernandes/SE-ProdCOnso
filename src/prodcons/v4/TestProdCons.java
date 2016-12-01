@@ -1,4 +1,4 @@
-package prodcons.v2;
+package prodcons.v4;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +57,7 @@ public class TestProdCons extends Simulateur {
 		
 	}
 	
-	/*public static void main(String[] args){
+	public static void main(String[] args){
 		if (args.length == 2)
 		{
 			init(args[1]);
@@ -69,7 +69,7 @@ public class TestProdCons extends Simulateur {
 		
 		new TestProdCons(new Observateur(),new ProdCons(TAILLE_BUFFER,nbProd)).start();
 	}
-	*/
+	
 	protected static int nbProd;
 	protected static int nbCons;
 	protected static int nbBuffer;

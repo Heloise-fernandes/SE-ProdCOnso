@@ -98,38 +98,22 @@ public class ProdCons implements Tampon{
 	//Modification des pointeurs
 	public void incrementerEcriture()
 	{
-		if(this.pointeurEcriture + 1 == this.taille())
-		{
-			this.pointeurEcriture = 0;
-		}
-		else{this.pointeurEcriture++;}
+		this.pointeurEcriture = ((this.pointeurEcriture + 1) % this.taille());
 	}
 	
 	public void decrementerEcriture()
 	{
-		if(this.pointeurEcriture == 0)
-		{
-			this.pointeurEcriture = this.taille()-1;
-		}
-		else{this.pointeurEcriture--;}
+		this.pointeurEcriture = ((this.pointeurEcriture - 1) % this.taille());
 	}
 	
 	public void incrementerLecture()
 	{
-		if(this.pointeurLecture + 1 == this.taille())
-		{
-			this.pointeurLecture = 0;
-		}
-		else{this.pointeurLecture++;}
+		this.pointeurLecture = ((this.pointeurLecture + 1) % this.taille());
 	}
 	
 	public void decrementerLecture()
 	{
-		if(this.pointeurLecture == 0)
-		{
-			this.pointeurLecture = this.taille()-1;
-		}
-		else{this.pointeurLecture--;}
+		this.pointeurLecture = ((this.pointeurLecture - 1) % this.taille());
 	}
 
 	

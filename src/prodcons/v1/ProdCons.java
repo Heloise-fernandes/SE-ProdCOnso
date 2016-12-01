@@ -81,7 +81,7 @@ public class ProdCons implements Tampon{
 			wait();
 		}
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " fait un put"+" value? : "+this.buffer[this.pointeurLecture]);
+		System.out.println("Producteur : "+ arg0.identification()+ " fait un put");
 		this.ecriture++;
 		this.buffer[this.pointeurEcriture]  = arg1;
 		this.incrementerEcriture();

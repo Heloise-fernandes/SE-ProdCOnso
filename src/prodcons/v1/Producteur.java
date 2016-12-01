@@ -18,11 +18,9 @@ public class Producteur extends Acteur implements _Producteur{
 		
 		//TODO : Generer nbMessage à produire
 		Aleatoire alea = new Aleatoire(nbMoyenProducteur, derivationProd);
-		this.nbMessage = alea.next();
+		this.nbMessage = alea.next()+1;
 		this.buffer = b;
-		this.idMsg = 0;
-		this.nbMessageEcrit = 0;
-		
+		this.idMsg = 0;		
 	}
 
 	@Override
@@ -35,7 +33,7 @@ public class Producteur extends Acteur implements _Producteur{
 	@Override
 	public void run() {
 		
-		while(nbMessage - nbMessageEcrit>0){
+		while(nbMessage - idMsg>0){
 			try 
 			{
 				//Temps construction message

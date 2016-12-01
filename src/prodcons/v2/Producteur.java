@@ -3,6 +3,7 @@ package prodcons.v2;
 import jus.poc.prodcons.Acteur;
 import jus.poc.prodcons.Aleatoire;
 import jus.poc.prodcons.ControlException;
+import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons._Producteur;
 
@@ -39,7 +40,8 @@ public class Producteur extends Acteur implements _Producteur{
 				//Temps construction message
 				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
 				//On dépose dans le buffer
-				this.buffer.put(this, new MessageX(super.identification(), this.idMsg));
+				Message m = new MessageX(super.identification(), this.idMsg);
+				this.buffer.put(this, m);
 				
 				this.idMsg++;
 			} catch (Exception e) {e.printStackTrace();}

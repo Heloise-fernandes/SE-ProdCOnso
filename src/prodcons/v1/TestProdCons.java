@@ -96,7 +96,6 @@ public class TestProdCons extends Simulateur {
 			public int get(String key){return Integer.parseInt(getProperty(key));}
 			public Properties(String file) {
 				String path = System.getProperty("user.dir" );
-				System.out.println(path+File.separatorChar+file);
 				try{
 					//InputStream a = ClassLoader.getSystemResourceAsStream(file);
 					InputStream a = new FileInputStream(path+File.separatorChar+file);

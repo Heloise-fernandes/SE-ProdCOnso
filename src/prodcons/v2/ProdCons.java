@@ -8,11 +8,12 @@ import jus.poc.prodcons._Producteur;
 //BUFFER
 public class ProdCons implements Tampon{
 
-	private int pointeurEcriture;
-	private int pointeurLecture;
 	private int ecriture;
 	private int lecture;
 	private int nbProd;
+	private Semaphore notFull;
+	private Semaphore notEmpty;
+	private Semaphore mutex;
 	//public TestProdCons test;
 	
 	private Message[] buffer;
@@ -20,22 +21,22 @@ public class ProdCons implements Tampon{
 	public ProdCons(int tailleBuffer, int producteur) 
 	{
 		this.buffer = new Message[tailleBuffer];
-		this.pointeurEcriture = 0;
-		this.pointeurLecture = 0;
 		this.ecriture = 0;
 		this.lecture = 0;
 		this.nbProd = producteur;
-		//this.test = new TestProdCons(observateur);
+		this.notFull = new Semaphore(1);
+		this.notEmpty = new Semaphore(0);
+		this.mutex = new Semaphore(1);
 	}
 	
 	@Override
 	public int enAttente() 
 	{
-		if(this.buffer[this.pointeurEcriture] != null)
+		if(this.buffer[ecriture%buffer.length] != null)
 		{
 			return 1;
 		}
-		else if(this.buffer[this.pointeurLecture] == null)
+		else if(this.buffer[lecture%buffer.length] == null)
 		{
 			return 1;
 		}
@@ -43,50 +44,56 @@ public class ProdCons implements Tampon{
 	}
 
 	@Override
-	public synchronized Message get(_Consommateur arg0) throws Exception, InterruptedException,PlusDeProdException {
+	public Message get(_Consommateur arg0) throws Exception, InterruptedException,PlusDeProdException {
 		
-		System.out.println("Consommateur : "+ arg0.identification()+ " tente un get");
-		
-		while((this.pointeurEcriture == this.pointeurLecture)||(this.buffer[this.pointeurLecture]==null))
+		mutex.p();
+		if((this.nbProd==0)&&(this.buffer[lecture]==null))
 		{
-			System.out.println("Consommateur : "+ arg0.identification() + "attent");
-			if((this.nbProd==0)&&(this.buffer[this.pointeurLecture]==null))
-			{
-				throw new PlusDeProdException();
-			}
-			wait();
+			mutex.v();
+			throw new PlusDeProdException();
 		}
-		System.out.println("Consommateur : "+ arg0.identification()+ " passe le get");
-	
-		Message m = this.buffer[this.pointeurLecture];
-		this.buffer[this.pointeurLecture] = null;
-		this.incrementerLecture();
-		this.lecture++;
+		mutex.v();
 		
-		this.notifyAll();
 		
+		System.out.println("Consommateur : "+ arg0.identification()+ " tente notEmpty");
+		notEmpty.p();
+		//notFull.p();
+		System.out.println("Consommateur : "+ arg0.identification()+ " passe le notEmpty");
+		System.out.println("Consommateur : "+ arg0.identification()+ " tente mutex");
+		mutex.p();
+		System.out.println("Consommateur : "+ arg0.identification()+ " passe le mutex");
+		
+		Message m = this.buffer[lecture];
+		this.buffer[lecture] = null;
+		this.lecture = (lecture + 1) %buffer.length;
+		mutex.v();
+		System.out.println("Consommateur : "+ arg0.identification()+ " libère le mutex");
+		notFull.v();
+		System.out.println("Consommateur : "+ arg0.identification()+ " libere le notFull");
 		return m;
 
 	}
 
 	@Override
-	public synchronized void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
+	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " tente un put");
-		
-		while(this.buffer[this.pointeurEcriture]!=null)//this.pointeurEcriture==this.buffer.length
+		System.out.println("Producteur : "+ arg0.identification()+ " tente notFull");
+		notFull.p();
+		System.out.println("Producteur : "+ arg0.identification()+ " tente un mutex");
+		mutex.p();
+		while(this.buffer[ecriture]!=null)//this.pointeurEcriture==this.buffer.length
 		{
 			System.out.println("Producteur : "+ arg0.identification() + " attend");
 			wait();
 		}
+		this.buffer[ecriture]  = arg1;
+		this.ecriture = (ecriture + 1) %buffer.length;
+		mutex.v();
+		notEmpty.v();
+		//notFull.v();
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " fait un put");
-		this.ecriture++;
-		this.buffer[this.pointeurEcriture]  = arg1;
-		this.incrementerEcriture();
+		System.out.println("Producteur : "+ arg0.identification()+ " fini");
 		
-		this.notifyAll();
-			
 	}
 
 	@Override
@@ -95,51 +102,15 @@ public class ProdCons implements Tampon{
 	}
 	
 	
-	//Modification des pointeurs
-	public void incrementerEcriture()
-	{
-		if(this.pointeurEcriture + 1 == this.taille())
-		{
-			this.pointeurEcriture = 0;
-		}
-		else{this.pointeurEcriture++;}
-	}
-	
-	public void decrementerEcriture()
-	{
-		if(this.pointeurEcriture == 0)
-		{
-			this.pointeurEcriture = this.taille()-1;
-		}
-		else{this.pointeurEcriture--;}
-	}
-	
-	public void incrementerLecture()
-	{
-		if(this.pointeurLecture + 1 == this.taille())
-		{
-			this.pointeurLecture = 0;
-		}
-		else{this.pointeurLecture++;}
-	}
-	
-	public void decrementerLecture()
-	{
-		if(this.pointeurLecture == 0)
-		{
-			this.pointeurLecture = this.taille()-1;
-		}
-		else{this.pointeurLecture--;}
-	}
-
-	
 	public void decrementeNbProducteur()
 	{
+		mutex.p();
 		this.nbProd--;
 		/*if(this.nbProd==0)
 		{
 			notifyAll();
 		}*/
+		mutex.v();
 	}
 	
 	

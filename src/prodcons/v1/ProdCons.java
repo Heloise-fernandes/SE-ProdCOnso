@@ -52,7 +52,6 @@ public class ProdCons implements Tampon{
 			System.out.println("Consommateur : "+ arg0.identification() + "attent");
 			if((this.nbProd==0)&&(this.buffer[this.pointeurLecture]==null))
 			{
-				System.out.println("Consommateur : "+ arg0.identification()+ " crève");
 				throw new PlusDeProdException();
 			}
 			wait();

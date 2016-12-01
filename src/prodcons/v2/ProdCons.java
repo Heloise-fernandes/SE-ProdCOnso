@@ -24,7 +24,7 @@ public class ProdCons implements Tampon{
 		this.ecriture = 0;
 		this.lecture = 0;
 		this.nbProd = producteur;
-		this.notFull = new Semaphore(1);
+		this.notFull = new Semaphore(this.taille());
 		this.notEmpty = new Semaphore(0);
 		this.mutex = new Semaphore(1);
 	}
@@ -81,11 +81,6 @@ public class ProdCons implements Tampon{
 		notFull.p();
 		System.out.println("Producteur : "+ arg0.identification()+ " tente un mutex");
 		mutex.p();
-		while(this.buffer[ecriture]!=null)//this.pointeurEcriture==this.buffer.length
-		{
-			System.out.println("Producteur : "+ arg0.identification() + " attend");
-			wait();
-		}
 		this.buffer[ecriture]  = arg1;
 		this.ecriture = (ecriture + 1) %buffer.length;
 		mutex.v();

@@ -46,6 +46,7 @@ public class ProdCons implements Tampon{
 	@Override
 	public Message get(_Consommateur arg0) throws Exception, InterruptedException,PlusDeProdException {
 		
+		
 		mutex.p();
 		if((this.nbProd==0)&&(this.buffer[lecture]==null))
 		{
@@ -57,23 +58,23 @@ public class ProdCons implements Tampon{
 		
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente notEmpty");
 		notEmpty.p();
-		//notFull.p();
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente mutex");
 		mutex.p();
-		System.out.println("Consommateur : "+ arg0.identification()+ " get message");
+		System.out.println("Consommateur : "+ arg0.identification()+"passe mutex");
 		
 		MessageX m = (MessageX) this.buffer[lecture];
 		int restant = m.getNbRestant();
 		if(restant==1)
 		{
-			System.out.println("==> Last message");
+			m.moinsUnMessage();
 			this.buffer[lecture] = null;
 			this.lecture = (lecture + 1) %buffer.length;
+			System.out.println("==> Last message, "+m.getNbRestant());
 		}
 		else
 		{
-			System.out.println("==> - message");
 			m.moinsUnMessage();
+			System.out.println("==> - message, "+m.getNbRestant());
 		}
 		mutex.v();
 		
@@ -83,7 +84,13 @@ public class ProdCons implements Tampon{
 			System.out.println("Consommateur : "+ arg0.identification()+ " libère full");
 			notFull.v();
 		}
+		if(this.nbProd==0)
+		{
+			this.notEmpty.v();
+		}
+			
 		mutex.v();
+		System.out.println("Consommateur : "+ arg0.identification()+ " libère mutex");
 		return m;
 
 	}
@@ -94,14 +101,14 @@ public class ProdCons implements Tampon{
 		System.out.println("Producteur : "+ arg0.identification()+ " tente notFull");
 		notFull.p();
 		System.out.println("Producteur : "+ arg0.identification()+ " tente un mutex");
+		
 		mutex.p();
 		this.buffer[ecriture]  = arg1;
 		this.ecriture = (ecriture + 1) %buffer.length;
 		mutex.v();
-		notEmpty.v();
-		//notFull.v();
 		
-		System.out.println("Producteur : "+ arg0.identification()+ "A écrit");
+		notEmpty.v();
+		System.out.println("Producteur : "+ arg0.identification()+ " libere");
 		
 	}
 
@@ -111,15 +118,13 @@ public class ProdCons implements Tampon{
 	}
 	
 	
-	public void decrementeNbProducteur()
+	public synchronized void decrementeNbProducteur()
 	{
-		mutex.p();
 		this.nbProd--;
-		/*if(this.nbProd==0)
+		if(this.nbProd==0)
 		{
-			notifyAll();
-		}*/
-		mutex.v();
+			this.notEmpty.v();
+		}
 	}
 	
 	

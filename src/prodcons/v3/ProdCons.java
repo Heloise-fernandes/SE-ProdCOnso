@@ -61,7 +61,8 @@ public class ProdCons implements Tampon{
 		if((this.nbProd==0))
 		{
 			notEmpty.v();
-			throw new PlusDeProdException();
+			if(this.buffer[lecture]==null)
+				throw new PlusDeProdException();
 		}
 		//notFull.p();
 		System.out.println("Consommateur : "+ arg0.identification()+ " passe le notEmpty");

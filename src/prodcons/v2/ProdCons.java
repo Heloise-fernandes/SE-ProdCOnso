@@ -57,11 +57,18 @@ public class ProdCons implements Tampon{
 		
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente notEmpty");
 		notEmpty.p();
+		if((this.nbProd==0))
+		{
+			notEmpty.v();
+			if(this.buffer[lecture]==null)
+				throw new PlusDeProdException();
+		}
 		//notFull.p();
 		System.out.println("Consommateur : "+ arg0.identification()+ " passe le notEmpty");
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente mutex");
 		mutex.p();
 		System.out.println("Consommateur : "+ arg0.identification()+ " passe le mutex");
+		
 		Message m = this.buffer[lecture];
 		this.buffer[lecture] = null;
 		this.lecture = (lecture + 1) %buffer.length;
@@ -100,10 +107,11 @@ public class ProdCons implements Tampon{
 	{
 		mutex.p();
 		this.nbProd--;
-		/*if(this.nbProd==0)
+		if(this.nbProd==0)
 		{
-			notifyAll();
-		}*/
+			//notifyAll();
+			notEmpty.v();
+		}
 		mutex.v();
 	}
 	

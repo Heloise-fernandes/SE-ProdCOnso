@@ -44,7 +44,7 @@ public class Producteur extends Acteur implements _Producteur{
 				aleatoire = Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement);
 				observateur.productionMessage(this, m, aleatoire);
 				//Temps construction message
-				sleep(aleatoire);
+				sleep(1000);
 				
 				//On dépose dans le buffer
 				this.buffer.put(this, m);

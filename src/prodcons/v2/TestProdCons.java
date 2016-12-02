@@ -57,7 +57,7 @@ public class TestProdCons extends Simulateur {
 		
 	}
 	
-	/*public static void main(String[] args){
+	public static void main(String[] args){
 		if (args.length == 2)
 		{
 			init(args[1]);
@@ -67,9 +67,9 @@ public class TestProdCons extends Simulateur {
 			init("options.xml");
 		}
 		
-		new TestProdCons(new Observateur(),new ProdCons(TAILLE_BUFFER,nbProd)).start();
+		new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
 	}
-	*/
+	
 	protected static int nbProd;
 	protected static int nbCons;
 	protected static int nbBuffer;

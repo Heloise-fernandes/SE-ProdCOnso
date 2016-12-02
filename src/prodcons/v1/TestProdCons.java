@@ -59,7 +59,7 @@ public class TestProdCons extends Simulateur {
 		
 	}
 	
-	/*public static void main(String[] args){
+	public static void main(String[] args){
 		if (args.length == 2)
 		{
 			init(args[1]);
@@ -69,8 +69,8 @@ public class TestProdCons extends Simulateur {
 			init("options.xml");
 		}
 		
-		new TestProdCons(new Observateur(),new ProdCons(TAILLE_BUFFER,nbProd)).start();
-	}*/
+		new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
+	}
 	
 	protected static int nbProd;
 	protected static int nbCons;
@@ -83,8 +83,6 @@ public class TestProdCons extends Simulateur {
 	protected static int deviationNombreMoyenDeProduction;
 	protected static int nombreMoyenNbExemplaire;
 	protected static int deviationNombreMoyenNbExemplaire;
-	
-	protected final static int TAILLE_BUFFER = 10;
 	/**
 	* Retreave the parameters of the application.
 	* @param file the final name of the file containing the options.

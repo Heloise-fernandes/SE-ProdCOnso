@@ -69,6 +69,7 @@ public class ProdCons implements Tampon{
 		mutex.p();
 		System.out.println("Consommateur : "+ arg0.identification()+ " passe le mutex");
 		
+		//TODO SI BUG ICI faire comme dans la v4 (descendre le if nbProd ici, avec mutex.v() en plus dedans
 		Message m = this.buffer[lecture];
 		this.buffer[lecture] = null;
 		this.lecture = (lecture + 1) %buffer.length;

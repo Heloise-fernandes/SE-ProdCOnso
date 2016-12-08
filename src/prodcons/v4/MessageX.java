@@ -1,5 +1,6 @@
 package prodcons.v4;
 
+import jus.poc.prodcons.Aleatoire;
 import jus.poc.prodcons.Message;
 
 public class MessageX implements Message{
@@ -12,7 +13,8 @@ public class MessageX implements Message{
 	{
 		this.numeroProd = numeroProd;
 		this.numeroMessage = numeroMessage;
-		this.multiple = nbConsommationAvantErase;
+		//TODO Passer en argument constructeur ?
+		this.multiple = Aleatoire.valeur(TestProdCons.nombreMoyenNbExemplaire, TestProdCons.deviationNombreMoyenNbExemplaire);
 	}
 	
 	public void moinsUnMessage()

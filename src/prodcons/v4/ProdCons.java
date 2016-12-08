@@ -57,7 +57,7 @@ public class ProdCons implements Tampon{
 		
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente notEmpty");
 		notEmpty.p();
-		if((this.nbProd==0))
+		if(this.nbProd==0)
 		{
 			notEmpty.v();
 			if(this.buffer[lecture]==null)
@@ -95,7 +95,7 @@ public class ProdCons implements Tampon{
 		System.out.println("Consommateur : "+ arg0.identification()+ " libère le mutex");
 		return m;
 		
-			}
+		}
 
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
@@ -133,8 +133,6 @@ public class ProdCons implements Tampon{
 		}
 		mutex.v();
 	}
-	
-	
 	
 	public String toString()
 	{

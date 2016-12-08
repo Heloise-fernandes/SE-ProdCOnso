@@ -57,23 +57,30 @@ public class ProdCons implements Tampon{
 		
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente notEmpty");
 		notEmpty.p();
+		if(this.nbProd==0)
+		{
+			notEmpty.v();
+			if(this.buffer[lecture]==null)
+				throw new PlusDeProdException();
+		}
 		//notFull.p();
+		System.out.println("Consommateur : "+ arg0.identification()+ " passe le notEmpty");
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente mutex");
 		mutex.p();
-		System.out.println("Consommateur : "+ arg0.identification()+ " get message");
 		
 		MessageX m = (MessageX) this.buffer[lecture];
 		int restant = m.getNbRestant();
 		if(restant==1)
 		{
-			System.out.println("==> Last message");
+			m.moinsUnMessage();
 			this.buffer[lecture] = null;
 			this.lecture = (lecture + 1) %buffer.length;
+			System.out.println("==> Last message, "+m.getNbRestant());
 		}
 		else
 		{
-			System.out.println("==> - message");
 			m.moinsUnMessage();
+			System.out.println("==> - message, "+m.getNbRestant());
 		}
 		mutex.v();
 		
@@ -83,10 +90,12 @@ public class ProdCons implements Tampon{
 			System.out.println("Consommateur : "+ arg0.identification()+ " libère full");
 			notFull.v();
 		}
+		
 		mutex.v();
+		System.out.println("Consommateur : "+ arg0.identification()+ " libère le mutex");
 		return m;
-
-	}
+		
+		}
 
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
@@ -94,14 +103,16 @@ public class ProdCons implements Tampon{
 		System.out.println("Producteur : "+ arg0.identification()+ " tente notFull");
 		notFull.p();
 		System.out.println("Producteur : "+ arg0.identification()+ " tente un mutex");
+		
 		mutex.p();
 		this.buffer[ecriture]  = arg1;
 		this.ecriture = (ecriture + 1) %buffer.length;
 		mutex.v();
+		
 		notEmpty.v();
 		//notFull.v();
 		
-		System.out.println("Producteur : "+ arg0.identification()+ "A écrit");
+		System.out.println("Producteur : "+ arg0.identification()+ " fini");
 		
 	}
 
@@ -115,14 +126,13 @@ public class ProdCons implements Tampon{
 	{
 		mutex.p();
 		this.nbProd--;
-		/*if(this.nbProd==0)
+		if(this.nbProd==0)
 		{
-			notifyAll();
-		}*/
+			//notifyAll();
+			notEmpty.v();
+		}
 		mutex.v();
 	}
-	
-	
 	
 	public String toString()
 	{

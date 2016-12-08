@@ -43,7 +43,6 @@ public class Producteur extends Acteur implements _Producteur{
 				//On dépose dans le buffer
 				Message m = new MessageX(super.identification(), this.idMsg,2);
 				this.buffer.put(this, m);
-				
 				this.idMsg++;
 			} catch (Exception e) {e.printStackTrace();}
 		}

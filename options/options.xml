@@ -4,9 +4,9 @@
 <comment>
 Cette configuration ...
 </comment>
-<entry key="nbProd">50</entry>
-<entry key="nbCons">100</entry>
-<entry key="nbBuffer">100</entry>
+<entry key="nbProd">20</entry>
+<entry key="nbCons">50</entry>
+<entry key="nbBuffer">10</entry>
 <entry key="tempsMoyenProduction">10</entry>
 <entry key="deviationTempsMoyenProduction">10</entry>
 <entry key="tempsMoyenConsommation">100</entry>

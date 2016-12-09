@@ -1,5 +1,9 @@
 package prodcons.v5;
 
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
@@ -11,9 +15,9 @@ public class ProdCons implements Tampon{
 	private int ecriture;
 	private int lecture;
 	private int nbProd;
-	private Semaphore notFull;
-	private Semaphore notEmpty;
-	private Semaphore mutex;
+	private Condition notFull;
+	private Condition notEmpty;
+	private Lock mutex;
 	//public TestProdCons test;
 	
 	private Message[] buffer;
@@ -24,9 +28,10 @@ public class ProdCons implements Tampon{
 		this.ecriture = 0;
 		this.lecture = 0;
 		this.nbProd = producteur;
-		this.notFull = new Semaphore(1);
-		this.notEmpty = new Semaphore(0);
-		this.mutex = new Semaphore(1);
+		this.mutex = new ReentrantLock();
+		this.notFull = mutex.newCondition();
+		this.notEmpty = mutex.newCondition();
+		
 	}
 	
 	@Override
@@ -47,54 +52,52 @@ public class ProdCons implements Tampon{
 	public Message get(_Consommateur arg0) throws Exception, InterruptedException,PlusDeProdException {
 		
 		
-		mutex.p();
-		if((this.nbProd==0)&&(this.buffer[lecture]==null))
-		{
-			mutex.v();
-			throw new PlusDeProdException();
-		}
-		mutex.v();
+		System.out.println("Consommateur : "+ arg0.identification()+ " tente lock");
 		
-		
-		System.out.println("Consommateur : "+ arg0.identification()+ " tente notEmpty");
-		notEmpty.p();
-		if((this.nbProd==0))
-		{
-			notEmpty.v();
-			if(this.buffer[lecture]==null)
+		mutex.lock();
+		try{
+			
+			if((this.buffer[lecture]==null)&&(this.nbProd!=0)){
+				System.out.println("====>Attendre consommateur "+arg0.identification());
+				notEmpty.await();
+			}
+			
+			if((this.nbProd==0)&&(this.buffer[lecture]==null))
+			{
+				System.out.println("====>Plus de rien à lire et plus de producteur,consomateur "+arg0.identification());
+				notEmpty.signalAll();
 				throw new PlusDeProdException();
-		}
-		//notFull.p();
-		System.out.println("Consommateur : "+ arg0.identification()+ " passe le notEmpty");
-		System.out.println("Consommateur : "+ arg0.identification()+ " tente mutex");
-		mutex.p();
-		System.out.println("Consommateur : "+ arg0.identification()+ " passe le mutex");
+			}
+			
+			Message m = this.buffer[lecture];
+			this.buffer[lecture] = null;
+			this.lecture = (lecture + 1) %buffer.length;
+			
+			System.out.println("Consommateur : "+ arg0.identification()+ " signal notFull");
+			notFull.signal();
+			System.out.println("Consommateur : "+ arg0.identification()+ " fait unlock");
+			return m;
+		}finally{
+			System.out.println("====>unlock,consomateur "+arg0.identification());
+			mutex.unlock();
+		}	
 		
-		Message m = this.buffer[lecture];
-		this.buffer[lecture] = null;
-		this.lecture = (lecture + 1) %buffer.length;
-		mutex.v();
-		System.out.println("Consommateur : "+ arg0.identification()+ " libère le mutex");
-		notFull.v();
-		System.out.println("Consommateur : "+ arg0.identification()+ " libere le notFull");
-		return m;
 
 	}
 
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
-		
-		System.out.println("Producteur : "+ arg0.identification()+ " tente notFull");
-		notFull.p();
-		System.out.println("Producteur : "+ arg0.identification()+ " tente un mutex");
-		mutex.p();
+		mutex.lock();
+		try{
+		if(this.buffer[ecriture]!=null){
+			notFull.await();
+		}
 		this.buffer[ecriture]  = arg1;
 		this.ecriture = (ecriture + 1) %buffer.length;
-		mutex.v();
-		notEmpty.v();
-		//notFull.v();
-		
-		System.out.println("Producteur : "+ arg0.identification()+ " fini");
+		notEmpty.signal();
+		}finally{
+			mutex.unlock();
+		}
 		
 	}
 
@@ -106,15 +109,18 @@ public class ProdCons implements Tampon{
 	
 	public void decrementeNbProducteur()
 	{
-		mutex.p();
+		mutex.lock();
+		try{
+			
 		this.nbProd--;
 		if(this.nbProd==0)
 		{
 			//notifyAll();
-			notEmpty.v();
+			notEmpty.signalAll();
 		}
-		mutex.v();
-		
+		}finally{
+			mutex.unlock();
+		}
 	}
 	
 	

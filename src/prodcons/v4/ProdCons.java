@@ -57,7 +57,6 @@ public class ProdCons implements Tampon{
 		
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente notEmpty");
 		notEmpty.p();
-		//notFull.p();
 		System.out.println("Consommateur : "+ arg0.identification()+ " passe le notEmpty");
 		System.out.println("Consommateur : "+ arg0.identification()+ " tente mutex");
 		mutex.p();
@@ -103,11 +102,11 @@ public class ProdCons implements Tampon{
 		this.ecriture = (ecriture + 1) %buffer.length;
 		
 		MessageX m = (MessageX) arg1;
+		
 		for (int i = 0; i < m.getNbRestant(); i++) {
 			notEmpty.v();
 		}
 		mutex.v();
-		//notFull.v();
 		
 		System.out.println("Producteur : "+ arg0.identification()+ " fini");
 		

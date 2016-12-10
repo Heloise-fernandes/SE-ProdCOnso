@@ -1,4 +1,4 @@
-package prodcons.v3;
+package prodcons.v6;
 
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;

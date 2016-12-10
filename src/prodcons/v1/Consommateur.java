@@ -31,22 +31,39 @@ public class Consommateur extends Acteur implements _Consommateur {
 	
 	@Override
 	public void run() {
-		while(true) //TODO changer ca
+		while(true) 
 		{
-			try 
-			{
-				Message m = this.buffer.get(this);
-				//TODO : imprimer message + faire genre temps de traitement
-				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
-				System.out.println(m);
-				this.incrementer();
-			}
-			catch (PlusDeProdException e) {break;}
-			catch (Exception e) {e.printStackTrace();}
+			Message m = this.consommer();
+			if(m==null){break;}
+			this.traiter(m);
 		}
-		System.out.println("Fin consomateur"+identification());
+		//System.out.println("Fin consomateur"+identification());
 	}
 	
+	public Message consommer()
+	{
+		try 
+		{
+			Message m = this.buffer.get(this);
+			this.incrementer();
+			return m;
+			
+		}
+		catch (PlusDeProdException e) {return null;}
+		catch (Exception e) {e.printStackTrace();}
+		return null;
+	}
+	
+	public void traiter(Message m)
+	{
+		try 
+		{
+			sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
+			System.out.println(m);
+			
+		}
+		catch (Exception e) {e.printStackTrace();}
+	}
 	
 
 }

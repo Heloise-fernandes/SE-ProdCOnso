@@ -14,10 +14,11 @@ public class Producteur extends Acteur implements _Producteur{
 	private ProdCons buffer;
 	private int nbMessageEcrit;
 	private int multiple;
+	
 	protected Producteur( Observateur observateur, int moyenneTempsDeTraitement,int deviationTempsDeTraitement, int nbMoyenProducteur, int derivationProd, ProdCons b) throws ControlException {
 		super(Acteur.typeProducteur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		
-		//TODO : Generer nbMessage à produire
+	
 		Aleatoire alea = new Aleatoire(nbMoyenProducteur, derivationProd);
 		this.nbMessage = alea.next()+1;
 		this.multiple = alea.next();

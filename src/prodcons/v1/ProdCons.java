@@ -1,5 +1,7 @@
 package prodcons.v1;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
@@ -25,7 +27,6 @@ public class ProdCons implements Tampon{
 		this.ecriture = 0;
 		this.lecture = 0;
 		this.nbProd = producteur;
-		//this.test = new TestProdCons(observateur);
 	}
 	
 	@Override
@@ -45,23 +46,18 @@ public class ProdCons implements Tampon{
 	@Override
 	public synchronized Message get(_Consommateur arg0) throws Exception, InterruptedException,PlusDeProdException {
 		
-		System.out.println("Consommateur : "+ arg0.identification()+ " tente un get");
-		
-		while((this.pointeurEcriture == this.pointeurLecture)||(this.buffer[this.pointeurLecture]==null))
+		while(this.buffer[this.lecture]==null)
 		{
-			System.out.println("Consommateur : "+ arg0.identification() + "attent");
-			if((this.nbProd==0)&&(this.buffer[this.pointeurLecture]==null))
+			if((this.nbProd==0)&&(this.buffer[this.lecture]==null))
 			{
 				throw new PlusDeProdException();
 			}
 			wait();
 		}
-		System.out.println("Consommateur : "+ arg0.identification()+ " passe le get");
-	
-		Message m = this.buffer[this.pointeurLecture];
-		this.buffer[this.pointeurLecture] = null;
+		
+		Message m = this.buffer[this.lecture];
+		this.buffer[this.lecture] = null;
 		this.incrementerLecture();
-		this.lecture++;
 		
 		this.notifyAll();
 		
@@ -72,17 +68,13 @@ public class ProdCons implements Tampon{
 	@Override
 	public synchronized void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " tente un put");
 		
-		while(this.buffer[this.pointeurEcriture]!=null)//this.pointeurEcriture==this.buffer.length
+		while(this.buffer[this.ecriture]!=null)//this.pointeurEcriture==this.buffer.length
 		{
-			System.out.println("Producteur : "+ arg0.identification() + " attend");
 			wait();
 		}
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " fait un put");
-		this.ecriture++;
-		this.buffer[this.pointeurEcriture]  = arg1;
+		this.buffer[this.ecriture]  = arg1;
 		this.incrementerEcriture();
 		
 		this.notifyAll();
@@ -98,35 +90,19 @@ public class ProdCons implements Tampon{
 	//Modification des pointeurs
 	public void incrementerEcriture()
 	{
-		this.pointeurEcriture = ((this.pointeurEcriture + 1) % this.taille());
-	}
-	
-	public void decrementerEcriture()
-	{
-		this.pointeurEcriture = ((this.pointeurEcriture - 1) % this.taille());
+		this.ecriture = ((this.ecriture + 1) %buffer.length);
 	}
 	
 	public void incrementerLecture()
 	{
-		this.pointeurLecture = ((this.pointeurLecture + 1) % this.taille());
+		this.lecture = ((this.lecture + 1)%buffer.length);
 	}
 	
-	public void decrementerLecture()
-	{
-		this.pointeurLecture = ((this.pointeurLecture - 1) % this.taille());
-	}
-
-	
-	public void decrementeNbProducteur()
+		
+	public synchronized void decrementeNbProducteur()
 	{
 		this.nbProd--;
-		/*if(this.nbProd==0)
-		{
-			notifyAll();
-		}*/
 	}
-	
-	
 	
 	public String toString()
 	{

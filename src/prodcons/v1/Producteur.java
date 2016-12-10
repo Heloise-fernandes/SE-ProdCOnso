@@ -16,7 +16,7 @@ public class Producteur extends Acteur implements _Producteur{
 	protected Producteur( Observateur observateur, int moyenneTempsDeTraitement,int deviationTempsDeTraitement, int nbMoyenProducteur, int derivationProd, ProdCons b) throws ControlException {
 		super(Acteur.typeProducteur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		
-		//TODO : Generer nbMessage à produire
+		
 		Aleatoire alea = new Aleatoire(nbMoyenProducteur, derivationProd);
 		this.nbMessage = alea.next()+1;
 		this.buffer = b;
@@ -38,14 +38,16 @@ public class Producteur extends Acteur implements _Producteur{
 			{
 				//Temps construction message
 				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
+				
 				//On dépose dans le buffer
 				this.buffer.put(this, new MessageX(super.identification(), this.idMsg));
 				
 				this.idMsg++;
+			
 			} catch (Exception e) {e.printStackTrace();}
 		}
 		this.buffer.decrementeNbProducteur();
-		System.out.println("Fin producteur"+identification());
+		//System.out.println(" - Fin producteur "+identification());
 	}
 
 }

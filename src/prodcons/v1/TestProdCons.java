@@ -28,25 +28,19 @@ public class TestProdCons extends Simulateur {
 	public Consommateur[] listConsommateur;
 	
 	
-	public TestProdCons(Observateur observateur, ProdCons buffer) {
+	public TestProdCons(Observateur observateur, ProdCons buffer) throws ControlException {
 		super(observateur);
 		
 		listProducteur = new Producteur[nbProd];
 		for(int i =0; i < nbProd; i++)
 		{
-			try {
-				listProducteur[i] = new Producteur(observateur, tempsMoyenProduction, deviationNombreMoyenDeProduction, nombreMoyenDeProduction,deviationNombreMoyenDeProduction, buffer);
-			} catch (ControlException e) {e.printStackTrace();}
+			listProducteur[i] = new Producteur(observateur, tempsMoyenProduction, deviationNombreMoyenDeProduction, nombreMoyenDeProduction,deviationNombreMoyenDeProduction, buffer);
 		}
 		listConsommateur = new Consommateur[nbCons];
 		for(int i =0; i < nbCons; i++)
 		{
-			try {
-				listConsommateur[i] = new Consommateur(observateur, tempsMoyenConsommation,deviationTempsMoyenConsommation, buffer);
-			} catch (ControlException e) {e.printStackTrace();}
-		}
-		
-		
+			listConsommateur[i] = new Consommateur(observateur, tempsMoyenConsommation,deviationTempsMoyenConsommation, buffer);
+		}		
 	}
 
 	@Override
@@ -128,7 +122,11 @@ public class TestProdCons extends Simulateur {
 	public static boolean begin(String s)
 	{
 		init(s);
-		new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
+		try {
+			new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
+		} catch (ControlException e) {
+			return false;
+		}
 		return true;
 	}
 

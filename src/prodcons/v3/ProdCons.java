@@ -30,13 +30,10 @@ public class ProdCons implements Tampon{
 	 * Semaphore protégant l'accès aux variables de la classe
 	 */
 	private Semaphore mutex;
-<<<<<<< Updated upstream
+
 	/**
 	 * Tableau représentant le buffer
 	 */
-=======
-	
->>>>>>> Stashed changes
 	private Message[] buffer;
 	
 	/**
@@ -94,11 +91,6 @@ public class ProdCons implements Tampon{
 				throw new PlusDeProdException();
 		}
 		
-<<<<<<< Updated upstream
-=======
-		//notFull.p();
-		
->>>>>>> Stashed changes
 		mutex.p();
 		/**
 		 * Pour la terminaison
@@ -128,10 +120,6 @@ public class ProdCons implements Tampon{
 		this.ecriture = (ecriture + 1) %buffer.length;
 		mutex.v();
 		notEmpty.v();
-<<<<<<< Updated upstream
-=======
-		
->>>>>>> Stashed changes
 	}
 
 	@Override

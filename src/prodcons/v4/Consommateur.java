@@ -13,10 +13,7 @@ public class Consommateur extends Acteur implements _Consommateur {
 	 * Le nombre de message consommé
 	 */
 	int nbMessage;
-<<<<<<< Updated upstream
-=======
 	
->>>>>>> Stashed changes
 	/**
 	 * Le buffer où l'on doit consommer
 	 */
@@ -24,24 +21,13 @@ public class Consommateur extends Acteur implements _Consommateur {
 	
 	/**
 	 * Constructeur
-<<<<<<< Updated upstream
 	 * @param observateur Observateur du système
 	 * @param moyenneTempsDeTraitement temps de traitement moyen d'un message
 	 * @param deviationTempsDeTraitement
 	 * @param b le buffer lié
 	 * @throws ControlException
 	 */
-	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	
-			int deviationTempsDeTraitement,ProdCons b) throws ControlException {
-=======
-	 * @param observateur 
-	 * @param moyenneTempsDeTraitement
-	 * @param deviationTempsDeTraitement
-	 * @param b buffer lié au consomateur
-	 * @throws ControlException
-	 */
 	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
->>>>>>> Stashed changes
 		super(Acteur.typeConsommateur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.buffer = b;
 		this.nbMessage = 0;
@@ -68,7 +54,6 @@ public class Consommateur extends Acteur implements _Consommateur {
 	 */
 	@Override
 	public void run() {
-<<<<<<< Updated upstream
 		while(true)
 		{
 			try 
@@ -82,7 +67,7 @@ public class Consommateur extends Acteur implements _Consommateur {
 			catch (Exception e) {e.printStackTrace();}
 		}
 		
-=======
+
 		while(true) 
 		{
 			Message m = this.consommer();
@@ -106,7 +91,7 @@ public class Consommateur extends Acteur implements _Consommateur {
 		catch (PlusDeProdException e) {return null;}
 		catch (Exception e) {e.printStackTrace();}
 		return null;
->>>>>>> Stashed changes
+
 	}
 	
 	/**

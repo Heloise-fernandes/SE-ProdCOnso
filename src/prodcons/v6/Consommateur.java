@@ -44,7 +44,7 @@ public class Consommateur extends Acteur implements _Consommateur {
 				observateurv6.retraitMessage(this, m);
 				//TODO : imprimer message + faire genre temps de traitement
 				sleep(aleatoire);
-				observateurv6.consommationMessage(this, m, aleatoire, System.currentTimeMillis());
+				observateurv6.consommationMessage(this, m, aleatoire);
 				
 				System.out.println(m);
 				this.incrementer();

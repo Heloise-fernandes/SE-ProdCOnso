@@ -12,38 +12,42 @@ import jus.poc.prodcons._Producteur;
 
 
 public class ObservateurV6 {
-	private ArrayList<_Producteur> producteurs;
-	private ArrayList<_Consommateur> consommateurs;
 	private boolean coherant = true;
-	private int nbProd;
 	private int nbCons;
-	private int tailleB;
-	private Hashtable<_Producteur,Message> depot;
-	private Hashtable<_Consommateur, Message> retrait;
+	private int nbProd;
+	private int trailleBuf;
 	
+	private int tpsAjout;
+	private int tpsDepot;
 	
-	public void init(int nbCons, int nbProd, int tailleBuffer){
-		this.producteurs = new ArrayList<_Producteur>();
-		this.consommateurs = new ArrayList<_Consommateur>();
-		this.nbProd = nbProd;
+	private Semaphore s;
+	
+	public void init(int nbCons, int nbProd, int tailleBuffer) throws ControlException{
+		if(nbCons<=0||nbProd<=0||tailleBuffer<=0){ throw new ControlException(getClass(), "consommationMessage");}
 		this.nbCons = nbCons;
-		this.tailleB = tailleBuffer;
-		this.depot = new Hashtable<_Producteur,Message>();
-		this.retrait = new Hashtable<_Consommateur, Message>();
+		this.nbProd = nbProd;
+		this.trailleBuf = tailleBuffer;
+		
+		this.tpsAjout = 0;
+		this.tpsDepot = 0;
+		this.s = new Semaphore(1);
 	}
 	
-	public synchronized boolean coherant() {
-		return this.coherant;
-	}
 	
     /**
      * Evenement correspondant à la consommation d'un message 
      * @param c
      * @param m
      * @param tempsDeTraitement
+     * @throws ControlException 
      */
-	 public void consommationMessage(_Consommateur c, Message m, int tempsDeTraitement){
-		 
+	 public void consommationMessage(_Consommateur c, Message m, int tempsDeTraitement, int tpsRetrait) throws ControlException{
+		if(c==null||m==null||tempsDeTraitement<=0||tpsRetrait<=0){ throw new ControlException(getClass(), "consommationMessage");}
+		s.p();
+		if(this.tpsAjout < tpsRetrait){this.tpsAjout = tpsRetrait;}
+		else
+		{ throw new ControlException(getClass(), "consommationMessage");}
+		s.v();
 	 }
 	 /**
 	  * Evenement correspondant au dépot d'un message dans le tampon  
@@ -51,54 +55,52 @@ public class ObservateurV6 {
 	  * @param m
 	 * @throws ControlException 
 	  */
-	 public synchronized void depotMessage(_Producteur p, Message m) throws ControlException{
-		 
-		 //On regarde les arguments
-		 if(p!=null && m != null && coherant()){
-			 if(!producteurs.contains(p)){
-				 throw new ControlException(getClass(), "depotMessage");
-			 }
-			 depot.put(p, m);
-		 }
+	 public synchronized void depotMessage(_Producteur p, Message m, int tpsDepot) throws ControlException{
+		 if(p==null||m==null||tpsDepot<=0){ throw new ControlException(getClass(), "depotMessage");}
+		 s.p();
+		 if(this.tpsAjout< tpsDepot){this.tpsAjout = tpsDepot;}
 		 else
-			 throw new ControlException(getClass(), "depotMessage");
-		 
-		 
-		 
-		 
+		 { throw new ControlException(getClass(), "depotMessage");}
+		 s.v();
 	 }
 	 
 	 /**
 	  *  Evenement correspondant à la création d'un nouveau consommateur 
 	  * @param c
+	 * @throws ControlException 
 	  */
-	 public synchronized void newConsommateur(_Consommateur c){
-		 
+	 public synchronized void newConsommateur(_Consommateur c) throws ControlException{
+		 if(c==null)
+		 { throw new ControlException(getClass(), "newConsommateur");}
 	 }
 	 /**
 	  *  Evenement correspondant à la création d'un nouveau producteur 
 	  * @param p
+	 * @throws ControlException 
 	  */
-	 public void newProducteur(_Producteur p)
+	 public void newProducteur(_Producteur p) throws ControlException
 	 {
-		 
+		 if(p==null)
+		 { throw new ControlException(getClass(), "newProducteur");}
 	 }
 	 /**
 	  * Evenement correspondant à la production d'un message         
 	  * @param p
 	  * @param m
 	  * @param tempsDeTraitement
+	 * @throws ControlException 
 	  */
-	 public void productionMessage(_Producteur p, Message m, int tempsDeTraitement){
-	        	   
+	 public void productionMessage(_Producteur p, Message m, int tempsDeTraitement) throws ControlException{
+	       if(p==null||m==null||tempsDeTraitement<=0){throw new ControlException(getClass(), "productionMessage");}
 	 }
 	 /**
 	  * Evenement correspondant au retrait d'un message du tampon  
 	  * @param c
 	  * @param m
+	 * @throws ControlException 
 	  */
-	 public  void retraitMessage(_Consommateur c, Message m){
-	        	   
+	 public  void retraitMessage(_Consommateur c, Message m) throws ControlException{
+		 if(c==null||m==null){throw new ControlException(getClass(), "retraitMessage");} 	   
 	 }
 	           
 

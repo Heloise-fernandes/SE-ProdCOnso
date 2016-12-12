@@ -57,10 +57,5 @@ public class Producteur extends Acteur implements _Producteur{
 			return m;
 		} catch (Exception e) {e.printStackTrace();}
 		return null;
-	}
-	
-	
-	
-	
-	
+	}	
 }

@@ -3,6 +3,8 @@ package prodcons.v4.v2;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import jus.poc.prodcons.ControlException;
 import jus.poc.prodcons.Observateur;
@@ -10,38 +12,35 @@ import jus.poc.prodcons.Simulateur;
 
 public class TestProdCons extends Simulateur {
 
+	protected static int nbProd;
+	protected static int nbCons;
+	protected static int nbBuffer;
+	protected static int tempsMoyenProduction;
+	protected static int deviationTempsMoyenProduction;
+	protected static int tempsMoyenConsommation;
+	protected static int deviationTempsMoyenConsommation;
+	protected static int nombreMoyenDeProduction;
+	protected static int deviationNombreMoyenDeProduction;
+	protected static int nombreMoyenNbExemplaire;
+	protected static int deviationNombreMoyenNbExemplaire;
+	
 	public Producteur[] listProducteur;
 	public Consommateur[] listConsommateur;
 	
-	
-	public TestProdCons(Observateur observateur, ProdCons buffer) {
+	/**Constructeur*/
+	public TestProdCons(Observateur observateur, ProdCons buffer) throws ControlException {
 		super(observateur);
 		
 		listProducteur = new Producteur[nbProd];
 		for(int i =0; i < nbProd; i++)
 		{
-			try {
-				listProducteur[i] = new Producteur(observateur, tempsMoyenProduction, 
-													deviationNombreMoyenDeProduction, nombreMoyenDeProduction, 
-													deviationNombreMoyenDeProduction, buffer);
-			} catch (ControlException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			listProducteur[i] = new Producteur(observateur, tempsMoyenProduction, deviationNombreMoyenDeProduction, nombreMoyenDeProduction,deviationNombreMoyenDeProduction, buffer);
 		}
 		listConsommateur = new Consommateur[nbCons];
 		for(int i =0; i < nbCons; i++)
 		{
-			try {
-				listConsommateur[i] = new Consommateur(observateur, tempsMoyenConsommation, 
-														deviationTempsMoyenConsommation, buffer);
-			} catch (ControlException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		
+			listConsommateur[i] = new Consommateur(observateur, tempsMoyenConsommation,deviationTempsMoyenConsommation, buffer);
+		}		
 	}
 
 	@Override
@@ -55,53 +54,53 @@ public class TestProdCons extends Simulateur {
 			listConsommateur[i].start();
 		}
 		
+		//On attend la fin de tout les threads lancer pour terminer l'exécution
+		for(int i =0; i < nbProd; i++)
+		{
+			listProducteur[i].join();
+		}
+		for(int i =0; i < nbCons; i++)
+		{
+			listConsommateur[i].join();
+		}
+			
 	}
 	
 	public static void main(String[] args){
+		String s;
 		if (args.length == 2)
 		{
-			init(args[1]);
+			s = args[1];//fichier passé en argument
 		}
 		else
 		{
-			init("options.xml");
+			s = "options.xml";//default
 		}
 		
-		new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
+		begin(s);
 	}
-	
-	protected static int nbProd;
-	protected static int nbCons;
-	protected static int nbBuffer;
-	protected static int tempsMoyenProduction;
-	protected static int deviationTempsMoyenProduction;
-	protected static int tempsMoyenConsommation;
-	protected static int deviationTempsMoyenConsommation;
-	protected static int nombreMoyenDeProduction;
-	protected static int deviationNombreMoyenDeProduction;
-	protected static int nombreMoyenNbExemplaire;
-	protected static int deviationNombreMoyenNbExemplaire;
 	
 	/**
 	* Retreave the parameters of the application.
 	* @param file the final name of the file containing the options.
 	*/
-	protected static void init(String file) {
+	protected static void init(String file) 
+	{
 		// retreave the parameters of the application
-		final class Properties extends java.util.Properties {
+		final class Properties extends java.util.Properties 
+		{
 			private static final long serialVersionUID = 1L;
+			
 			public int get(String key){return Integer.parseInt(getProperty(key));}
-			public Properties(String file) {
+			
+			public Properties(String file) 
+			{
 				String path = System.getProperty("user.dir" );
-				System.out.println(path+File.separatorChar+file);
 				try{
 					//InputStream a = ClassLoader.getSystemResourceAsStream(file);
 					InputStream a = new FileInputStream(path+File.separatorChar+file);
 					loadFromXML(a);
-				}catch(Exception e){
-					//TODO Traitement des erreurs dans le main non ?
-					e.printStackTrace();
-				}
+				}catch(Exception e){e.printStackTrace();}
 			}
 		}
 		//optionApp = new Properties("jus/poc/prodcons/options/"+file);
@@ -120,5 +119,21 @@ public class TestProdCons extends Simulateur {
 		nombreMoyenNbExemplaire = optionApp.get("nombreMoyenNbExemplaire");
 		deviationNombreMoyenNbExemplaire = optionApp.get("deviationNombreMoyenNbExemplaire");
 	}
-
+	
+	/**Fonction qui permet de creer un nouveau testProdcons*/
+	public synchronized static boolean begin(String s)
+	{
+		init(s);
+		if(nbProd*(nombreMoyenNbExemplaire+deviationNombreMoyenNbExemplaire)<nbCons)
+		{
+			try {
+				new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
+			} catch (Exception e) {
+				return false;
+			}
+			return true;
+		}
+		System.out.println("Cette configuration n'est pas possible");
+		return false;
+	}
 }

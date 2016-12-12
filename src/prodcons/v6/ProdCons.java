@@ -14,7 +14,6 @@ public class ProdCons implements Tampon{
 	private Semaphore notFull;
 	private Semaphore notEmpty;
 	private Semaphore mutex;
-	//public TestProdCons test;
 	
 	private Message[] buffer;
 	
@@ -66,9 +65,6 @@ public class ProdCons implements Tampon{
 				throw new PlusDeProdException();
 		}
 		
-		//notFull.p();
-		System.out.println("Consommateur : "+ arg0.identification()+ " passe le notEmpty");
-		System.out.println("Consommateur : "+ arg0.identification()+ " tente mutex");
 		
 		mutex.p();
 		if((this.nbProd==0)&&(this.buffer[lecture]==null))
@@ -76,17 +72,14 @@ public class ProdCons implements Tampon{
 			mutex.v();
 			throw new PlusDeProdException();
 		}
-		System.out.println("Consommateur : "+ arg0.identification()+ " passe le mutex");
 		
 		Message m = this.buffer[lecture];
 		this.buffer[lecture] = null;
 		this.lecture = (lecture + 1) %buffer.length;
 		
 		mutex.v();
-		System.out.println("Consommateur : "+ arg0.identification()+ " libère le mutex");
 		notFull.v();
 		
-		System.out.println("Consommateur : "+ arg0.identification()+ " libere le notFull");
 		return m;
 
 	}
@@ -94,17 +87,14 @@ public class ProdCons implements Tampon{
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " tente notFull");
+		
 		notFull.p();
-		System.out.println("Producteur : "+ arg0.identification()+ " tente un mutex");
 		mutex.p();
 		this.buffer[ecriture]  = arg1;
 		this.ecriture = (ecriture + 1) %buffer.length;
 		mutex.v();
 		notEmpty.v();
-		//notFull.v();
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " fini");
 		
 	}
 
@@ -113,14 +103,13 @@ public class ProdCons implements Tampon{
 		return this.buffer.length;
 	}
 	
-	
+	/**Décrémente le nombre de producteur actifs*/
 	public void decrementeNbProducteur()
 	{
 		mutex.p();
 		this.nbProd--;
 		if(this.nbProd==0)
 		{
-			//notifyAll();
 			notEmpty.v();
 		}
 		mutex.v();
@@ -128,7 +117,7 @@ public class ProdCons implements Tampon{
 	}
 	
 	
-	
+	/**Représentation textuelle du buffer*/
 	public String toString()
 	{
 		return "ProdCons : nombre de lecture("+this.lecture+"), nombre d'écriture("+this.ecriture+")";

@@ -9,11 +9,16 @@ import jus.poc.prodcons._Producteur;
 
 public class Producteur extends Acteur implements _Producteur{
 	
+	/**Nombre de message à écrire*/
 	private int nbMessage;
+	/**Numéro du prochain message à écrire*/
 	private int idMsg;
+	/**Buffer*/
 	private ProdCons buffer;
+	/**Nombre de message écrit*/
 	private int nbMessageEcrit;
 	
+	/**Construteur*/
 	protected Producteur( Observateur observateur, int moyenneTempsDeTraitement,int deviationTempsDeTraitement, int nbMoyenProducteur, int derivationProd, ProdCons b) throws ControlException {
 		super(Acteur.typeProducteur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		
@@ -36,12 +41,12 @@ public class Producteur extends Acteur implements _Producteur{
 		
 		while(nbMessage - idMsg>0){
 			this.ecrire();
-			//System.out.println("Producteur "+identification()+" toujour en vie");
 		}
 		this.buffer.decrementeNbProducteur();
 		System.out.println(" - Fin producteur "+identification());
 	}
 
+	/**Fonction qui permet d'écrire un message dans le buffer*/
 	public Message ecrire()
 	{
 		try 
@@ -52,7 +57,7 @@ public class Producteur extends Acteur implements _Producteur{
 			
 			//On dépose dans le buffer
 			this.buffer.put(this, m);
-			
+			//on incrémente le nombre de message ajouté au buffer
 			this.idMsg++;
 			return m;
 		} catch (Exception e) {e.printStackTrace();}

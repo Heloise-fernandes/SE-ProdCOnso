@@ -13,6 +13,10 @@ public class Consommateur extends Acteur implements _Consommateur {
 	 * Le nombre de message consommé
 	 */
 	int nbMessage;
+<<<<<<< Updated upstream
+=======
+	
+>>>>>>> Stashed changes
 	/**
 	 * Le buffer où l'on doit consommer
 	 */
@@ -20,6 +24,7 @@ public class Consommateur extends Acteur implements _Consommateur {
 	
 	/**
 	 * Constructeur
+<<<<<<< Updated upstream
 	 * @param observateur Observateur du système
 	 * @param moyenneTempsDeTraitement temps de traitement moyen d'un message
 	 * @param deviationTempsDeTraitement
@@ -28,11 +33,23 @@ public class Consommateur extends Acteur implements _Consommateur {
 	 */
 	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	
 			int deviationTempsDeTraitement,ProdCons b) throws ControlException {
+=======
+	 * @param observateur 
+	 * @param moyenneTempsDeTraitement
+	 * @param deviationTempsDeTraitement
+	 * @param b buffer lié au consomateur
+	 * @throws ControlException
+	 */
+	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
+>>>>>>> Stashed changes
 		super(Acteur.typeConsommateur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.buffer = b;
 		this.nbMessage = 0;
 	}
 
+	/**
+	 * Renvoie le nombre de messages lu par le consommateur
+	 */
 	@Override
 	public int nombreDeMessages() {
 		return nbMessage;
@@ -46,8 +63,12 @@ public class Consommateur extends Acteur implements _Consommateur {
 		this.nbMessage++;
 	}
 	
+	/**
+	 * Coeur de metier du consommateur
+	 */
 	@Override
 	public void run() {
+<<<<<<< Updated upstream
 		while(true)
 		{
 			try 
@@ -61,8 +82,47 @@ public class Consommateur extends Acteur implements _Consommateur {
 			catch (Exception e) {e.printStackTrace();}
 		}
 		
+=======
+		while(true) 
+		{
+			Message m = this.consommer();
+			if(m==null){break;}
+			this.traiter(m);
+		}
+	}
+	/**
+	 * Demande au buffer un message
+	 * @return le message récupéré du buffer
+	 */
+	public Message consommer()
+	{
+		try 
+		{
+			Message m = this.buffer.get(this);
+			this.incrementer();
+			return m;
+			
+		}
+		catch (PlusDeProdException e) {return null;}
+		catch (Exception e) {e.printStackTrace();}
+		return null;
+>>>>>>> Stashed changes
 	}
 	
+	/**
+	 * Traite le message préalablement récupéré
+	 * @param m le message récupéré du buffer
+	 */
+	public void traiter(Message m)
+	{
+		try 
+		{
+			sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
+			System.out.println(m);
+			
+		}
+		catch (Exception e) {e.printStackTrace();}
+	}
 	
 
 }

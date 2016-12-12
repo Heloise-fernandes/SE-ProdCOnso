@@ -10,6 +10,19 @@ import jus.poc.prodcons.Simulateur;
 
 public class TestProdCons extends Simulateur {
 
+	
+
+	protected static int nbProd;
+	protected static int nbCons;
+	protected static int nbBuffer;
+	protected static int tempsMoyenProduction;
+	protected static int deviationTempsMoyenProduction;
+	protected static int tempsMoyenConsommation;
+	protected static int deviationTempsMoyenConsommation;
+	protected static int nombreMoyenDeProduction;
+	protected static int deviationNombreMoyenDeProduction;
+	protected static int nombreMoyenNbExemplaire;
+	protected static int deviationNombreMoyenNbExemplaire;
 	public Producteur[] listProducteur;
 	public Consommateur[] listConsommateur;
 	
@@ -20,7 +33,6 @@ public class TestProdCons extends Simulateur {
 		try {
 			observateurV6.init(nbProd, nbCons, nbBuffer);
 		} catch (ControlException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -32,7 +44,6 @@ public class TestProdCons extends Simulateur {
 													deviationNombreMoyenDeProduction, nombreMoyenDeProduction, 
 													deviationNombreMoyenDeProduction, buffer);
 			} catch (ControlException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -40,10 +51,9 @@ public class TestProdCons extends Simulateur {
 		for(int i =0; i < nbCons; i++)
 		{
 			try {
-				listConsommateur[i] = new Consommateur(observateurV6, observateur, tempsMoyenConsommation, 
+				listConsommateur[i] = new Consommateur(observateur, observateurV6, tempsMoyenConsommation, 
 														deviationTempsMoyenConsommation, buffer);
 			} catch (ControlException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -77,17 +87,6 @@ public class TestProdCons extends Simulateur {
 		new TestProdCons(new Observateur(), new ObservateurV6(),new ProdCons(nbBuffer,nbProd)).start();
 	}
 	
-	protected static int nbProd;
-	protected static int nbCons;
-	protected static int nbBuffer;
-	protected static int tempsMoyenProduction;
-	protected static int deviationTempsMoyenProduction;
-	protected static int tempsMoyenConsommation;
-	protected static int deviationTempsMoyenConsommation;
-	protected static int nombreMoyenDeProduction;
-	protected static int deviationNombreMoyenDeProduction;
-	protected static int nombreMoyenNbExemplaire;
-	protected static int deviationNombreMoyenNbExemplaire;
 	
 	/**
 	* Retreave the parameters of the application.
@@ -106,7 +105,6 @@ public class TestProdCons extends Simulateur {
 					InputStream a = new FileInputStream(path+File.separatorChar+file);
 					loadFromXML(a);
 				}catch(Exception e){
-					//TODO Traitement des erreurs dans le main non ?
 					e.printStackTrace();
 				}
 			}

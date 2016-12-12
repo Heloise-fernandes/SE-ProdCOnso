@@ -14,10 +14,12 @@ public class ProdCons implements Tampon{
 	private Semaphore notFull;
 	private Semaphore notEmpty;
 	private Semaphore mutex;
-	//public TestProdCons test;
 	
 	private Message[] buffer;
 	
+	/**Constructeur
+	 * @param tailleBuffer : capacité du buffer
+	 * 	producteur : le nombre de producteur qui pevent écrire dans le buffer*/
 	public ProdCons(int tailleBuffer, int producteur) 
 	{
 		this.buffer = new Message[tailleBuffer];
@@ -50,21 +52,19 @@ public class ProdCons implements Tampon{
 		if((this.nbProd==0)&&(this.buffer[lecture]==null))
 		{
 			mutex.v();
-			throw new PlusDeProdException();
+			throw new PlusDeProdException();//on s'arête
 		}
 		mutex.v();
 		
 		
-		System.out.println("Consommateur : "+ arg0.identification()+ " tente notEmpty");
 		notEmpty.p();
-		System.out.println("Consommateur : "+ arg0.identification()+ " tente mutex");
 		mutex.p();
 		
-		if(this.nbProd==0)
+		if(this.nbProd==0)//si plus de producteur
 		{
-			notEmpty.v();
+			notEmpty.v();//on libère un consommateur
 			mutex.v();
-			if(this.buffer[lecture]==null)
+			if(this.buffer[lecture]==null)//si plus de message fin
 				throw new PlusDeProdException();
 		}
 		
@@ -72,14 +72,12 @@ public class ProdCons implements Tampon{
 		int restant = m.getNbRestant();
 		if(restant==1)
 		{
-			System.out.println("Consommateur : "+ arg0.identification()+ " lit le dernier message");
 			m.moinsUnMessage();			
 			this.buffer[lecture] = null;
-			this.lecture = (lecture + 1) %buffer.length;
-			System.out.println("Consommateur : "+ arg0.identification()+ " libère tout le monde");
+			this.lecture = (lecture + 1) %buffer.length;//on avance le pointeur de lecture
 			for(int i = 0 ; i < m.getNbMsg(); i++)
 			{
-				m.v();
+				m.v();//libère le producteur et tout les consommateurs bloqué sur le message
 			}
 			notFull.v();
 			mutex.v();
@@ -87,11 +85,8 @@ public class ProdCons implements Tampon{
 		else
 		{
 			m.moinsUnMessage();
-			System.out.println("Consommateur : "+ arg0.identification()+ " mutex");
 			mutex.v();
-			System.out.println("Consommateur : "+ arg0.identification()+ " se bloque car pas le dernier exemplaire");
-			System.out.println("==> - message, Consommateur : "+ arg0.identification()+" : "+m.getNbRestant());
-			m.p();
+			m.p();//on bloque le consommateur sur le message
 		}
 		return m;
 		
@@ -100,9 +95,8 @@ public class ProdCons implements Tampon{
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " tente notFull");
+		
 		notFull.p();
-		System.out.println("Producteur : "+ arg0.identification()+ " tente un mutex");
 		mutex.p();
 		
 		this.buffer[ecriture]  = arg1;
@@ -111,15 +105,12 @@ public class ProdCons implements Tampon{
 		MessageX m = (MessageX) arg1;
 		
 		for (int i = 0; i < m.getNbRestant(); i++) {
-			notEmpty.v();
+			notEmpty.v();//on libère autant de consommateur qu'il y d'éxemplaire à lire
 		}
 		mutex.v();
 		
-		System.out.println("Producteur : "+ arg0.identification()+ " bloqué sur le message");
-		m.p();
-		
-		System.out.println("Producteur : "+ arg0.identification()+ " fini");
-		
+		m.p();//on bloque le producteur sur le message
+			
 	}
 
 	@Override
@@ -127,7 +118,7 @@ public class ProdCons implements Tampon{
 		return this.buffer.length;
 	}
 	
-	
+	/**Décrémente le nombre de producteur actifs*/
 	public void decrementeNbProducteur()
 	{
 		mutex.p();
@@ -139,6 +130,7 @@ public class ProdCons implements Tampon{
 		mutex.v();
 	}
 	
+	/**Représentation textuelle du buffer*/
 	public String toString()
 	{
 		return "ProdCons : nombre de lecture("+this.lecture+"), nombre d'écriture("+this.ecriture+")";

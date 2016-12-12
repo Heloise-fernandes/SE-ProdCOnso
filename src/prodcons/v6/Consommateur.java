@@ -9,53 +9,98 @@ import jus.poc.prodcons.Observateur;
 
 public class Consommateur extends Acteur implements _Consommateur {
 	
-
-	int nbMessage;
-	ProdCons buffer;
+	/**Observateur*/
 	ObservateurV6 observateurv6;
 	
-	protected Consommateur( ObservateurV6 observateurv6, Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
+	/**
+	 * Le nombre de message consommé
+	 */
+	int nbMessage;
+	
+	/**
+	 * Le buffer où l'on doit consommer
+	 */
+	ProdCons buffer;
+	
+	/**
+	 * Constructeur
+	 * @param observateur 
+	 * @param moyenneTempsDeTraitement
+	 * @param deviationTempsDeTraitement
+	 * @param b buffer lié au consomateur
+	 * @throws ControlException
+	 */
+	protected Consommateur( Observateur observateur,ObservateurV6 o, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
 		super(Acteur.typeConsommateur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.buffer = b;
 		this.nbMessage = 0;
-		this.observateurv6 =observateurv6;
-		observateurv6.newConsommateur(this);
+		this.observateurv6 = o;
 	}
 
+	/**
+	 * Renvoie le nombre de messages lu par le consommateur
+	 */
 	@Override
 	public int nombreDeMessages() {
 		return nbMessage;
 	}
 
+	/**
+	 * permet d'incrementer le nombre de message lu
+	 */
 	public void incrementer()
 	{
 		this.nbMessage++;
 	}
 	
+	/**
+	 * Coeur de metier du consommateur
+	 */
 	@Override
 	public void run() {
-		int aleatoire;
-		while(true) //TODO changer ca
+		while(true) 
 		{
-			try 
-			{
-				aleatoire = Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement);
-				Message m = this.buffer.get(this);
-				observateurv6.retraitMessage(this, m);
-				//TODO : imprimer message + faire genre temps de traitement
-				sleep(aleatoire);
-				observateurv6.consommationMessage(this, m, aleatoire);
-				
-				System.out.println(m);
-				this.incrementer();
-				
-			}
-			catch (PlusDeProdException e) {break;}
-			catch (Exception e) {e.printStackTrace();}
+			Message m = this.consommer();
+			if(m==null){break;}
+			this.traiter(m);
+			//System.out.println("Consommateur "+identification()+" toujour en vie");
 		}
-		System.out.println("Fin consomateur"+identification());
+	}
+	/**
+	 * Demande au buffer un message
+	 * @return le message récupéré du buffer
+	 */
+	public Message consommer()
+	{
+		try 
+		{
+			Message m = this.buffer.get(this);
+			this.incrementer();
+			return m;
+			
+		}
+		catch (PlusDeProdException e) {return null;}
+		catch (Exception e) {e.printStackTrace();}
+		return null;
 	}
 	
+	/**
+	 * Traite le message préalablement récupéré
+	 * @param m le message récupéré du buffer
+	 */
+	public void traiter(Message m)
+	{
+		try 
+		{
+			int aleatoire = Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement);
+			sleep(aleatoire);
+			observateurv6.consommationMessage(this, m, aleatoire);
+			System.out.println(m);
+			
+		}
+		catch (Exception e) {e.printStackTrace();}
+	}
 	
 
 }
+

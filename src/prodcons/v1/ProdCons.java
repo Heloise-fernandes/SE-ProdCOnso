@@ -15,10 +15,12 @@ public class ProdCons implements Tampon{
 	private int ecriture;
 	private int lecture;
 	private int nbProd;
-	//public TestProdCons test;
 	
 	private Message[] buffer;
 	
+	/**Constructeur
+	 * @param tailleBuffer : capacité du buffer
+	 * 	producteur : le nombre de producteur qui pevent écrire dans le buffer*/
 	public ProdCons(int tailleBuffer, int producteur) 
 	{
 		this.buffer = new Message[tailleBuffer];
@@ -28,6 +30,7 @@ public class ProdCons implements Tampon{
 		this.lecture = 0;
 		this.nbProd = producteur;
 	}
+	
 	
 	@Override
 	public int enAttente() 
@@ -46,9 +49,9 @@ public class ProdCons implements Tampon{
 	@Override
 	public synchronized Message get(_Consommateur arg0) throws Exception, InterruptedException,PlusDeProdException {
 		
-		while(this.buffer[this.lecture]==null)
+		while(this.buffer[this.lecture]==null)//si le consommateur souhaite lire une case vide il doit attendre 
 		{
-			if((this.nbProd==0)&&(this.buffer[this.lecture]==null))
+			if((this.nbProd==0)&&(this.buffer[this.lecture]==null))//s'il n'y a plus de producteur et que la case et vide(redondance) il notify les autres consomateur et s'arête
 			{
 				notifyAll();
 				throw new PlusDeProdException();
@@ -70,7 +73,7 @@ public class ProdCons implements Tampon{
 	public synchronized void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		
 		
-		while(this.buffer[this.ecriture]!=null)//this.pointeurEcriture==this.buffer.length
+		while(this.buffer[this.ecriture]!=null)//si le producteur souhaite écrire dans une case non vide il doit attendre
 		{
 			wait();
 		}
@@ -88,23 +91,25 @@ public class ProdCons implements Tampon{
 	}
 	
 	
-	//Modification des pointeurs
+	/**Incrémente la position du pointeur d'écriture*/
 	public void incrementerEcriture()
 	{
 		this.ecriture = ((this.ecriture + 1) %buffer.length);
 	}
 	
+	/**Incrémente la position du pointeur de lecture*/
 	public void incrementerLecture()
 	{
 		this.lecture = ((this.lecture + 1)%buffer.length);
 	}
 	
-		
+	/**Décrémente le nombre de producteur actifs*/
 	public synchronized void decrementeNbProducteur()
 	{
 		this.nbProd--;
 	}
 	
+	/**Représentation textuelle du buffer*/
 	public String toString()
 	{
 		return "ProdCons : nombre de lecture("+this.lecture+"), nombre d'écriture("+this.ecriture+")";

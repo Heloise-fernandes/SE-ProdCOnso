@@ -27,7 +27,7 @@ public class TestProdCons extends Simulateur {
 	public Producteur[] listProducteur;
 	public Consommateur[] listConsommateur;
 	
-	
+	/**Constructeur*/
 	public TestProdCons(Observateur observateur, ProdCons buffer) throws ControlException {
 		super(observateur);
 		
@@ -54,6 +54,7 @@ public class TestProdCons extends Simulateur {
 			listConsommateur[i].start();
 		}
 		
+		//On attend la fin de tout les threads lancer pour terminer l'exécution
 		for(int i =0; i < nbProd; i++)
 		{
 			listProducteur[i].join();
@@ -69,11 +70,11 @@ public class TestProdCons extends Simulateur {
 		String s;
 		if (args.length == 2)
 		{
-			s = args[1];
+			s = args[1];//fichier passé en argument
 		}
 		else
 		{
-			s = "options.xml";
+			s = "options.xml";//default
 		}
 		
 		begin(s);
@@ -119,6 +120,7 @@ public class TestProdCons extends Simulateur {
 		deviationNombreMoyenNbExemplaire = optionApp.get("deviationNombreMoyenNbExemplaire");
 	}
 	
+	/**Fonction qui permet de creer un nouveau testProdcons*/
 	public synchronized static boolean begin(String s)
 	{
 		init(s);

@@ -3,6 +3,7 @@ package prodcons.v1;
 import jus.poc.prodcons.Acteur;
 import jus.poc.prodcons.Aleatoire;
 import jus.poc.prodcons.ControlException;
+import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons._Producteur;
 
@@ -34,20 +35,31 @@ public class Producteur extends Acteur implements _Producteur{
 	public void run() {
 		
 		while(nbMessage - idMsg>0){
-			try 
-			{
-				//Temps construction message
-				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
-				
-				//On dépose dans le buffer
-				this.buffer.put(this, new MessageX(super.identification(), this.idMsg));
-				
-				this.idMsg++;
-			
-			} catch (Exception e) {e.printStackTrace();}
+			this.ecrire();
 		}
 		this.buffer.decrementeNbProducteur();
 		//System.out.println(" - Fin producteur "+identification());
 	}
 
+	public Message ecrire()
+	{
+		try 
+		{
+			//Temps construction message
+			sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
+			Message m = new MessageX(super.identification(), this.idMsg);
+			
+			//On dépose dans le buffer
+			this.buffer.put(this, m);
+			
+			this.idMsg++;
+			return m;
+		} catch (Exception e) {e.printStackTrace();}
+		return null;
+	}
+	
+	
+	
+	
+	
 }

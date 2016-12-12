@@ -12,12 +12,14 @@ public class Consommateur extends Acteur implements _Consommateur {
 
 	int nbMessage;
 	ProdCons buffer;
+	ObservateurV6 observateurv6;
 	
-	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
+	protected Consommateur( ObservateurV6 observateurv6, Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
 		super(Acteur.typeConsommateur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.buffer = b;
 		this.nbMessage = 0;
-		observateur.newConsommateur(this);
+		this.observateurv6 =observateurv6;
+		observateurv6.newConsommateur(this);
 	}
 
 	@Override
@@ -39,10 +41,10 @@ public class Consommateur extends Acteur implements _Consommateur {
 			{
 				aleatoire = Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement);
 				Message m = this.buffer.get(this);
-				observateur.retraitMessage(this, m);
+				observateurv6.retraitMessage(this, m);
 				//TODO : imprimer message + faire genre temps de traitement
 				sleep(aleatoire);
-				observateur.consommationMessage(this, m, aleatoire);
+				observateurv6.consommationMessage(this, m, aleatoire, System.currentTimeMillis());
 				
 				System.out.println(m);
 				this.incrementer();

@@ -17,8 +17,8 @@ public class ObservateurV6 {
 	private int nbProd;
 	private int trailleBuf;
 	
-	private int tpsAjout;
-	private int tpsDepot;
+	private long tpsAjout;
+	private long tpsDepot;
 	
 	private Semaphore s;
 	
@@ -41,10 +41,10 @@ public class ObservateurV6 {
      * @param tempsDeTraitement
      * @throws ControlException 
      */
-	 public void consommationMessage(_Consommateur c, Message m, int tempsDeTraitement, int tpsRetrait) throws ControlException{
-		if(c==null||m==null||tempsDeTraitement<=0||tpsRetrait<=0){ throw new ControlException(getClass(), "consommationMessage");}
+	 public void consommationMessage(_Consommateur c, Message m, int tempsDeTraitement, long l) throws ControlException{
+		if(c==null||m==null||tempsDeTraitement<=0||l<=0){ throw new ControlException(getClass(), "consommationMessage");}
 		s.p();
-		if(this.tpsAjout < tpsRetrait){this.tpsAjout = tpsRetrait;}
+		if(this.tpsAjout < l){this.tpsAjout = l;}
 		else
 		{ throw new ControlException(getClass(), "consommationMessage");}
 		s.v();
@@ -55,10 +55,10 @@ public class ObservateurV6 {
 	  * @param m
 	 * @throws ControlException 
 	  */
-	 public synchronized void depotMessage(_Producteur p, Message m, int tpsDepot) throws ControlException{
-		 if(p==null||m==null||tpsDepot<=0){ throw new ControlException(getClass(), "depotMessage");}
+	 public synchronized void depotMessage(_Producteur p, Message m, long l) throws ControlException{
+		 if(p==null||m==null||l<=0){ throw new ControlException(getClass(), "depotMessage");}
 		 s.p();
-		 if(this.tpsAjout< tpsDepot){this.tpsAjout = tpsDepot;}
+		 if(this.tpsAjout< l){this.tpsAjout = l;}
 		 else
 		 { throw new ControlException(getClass(), "depotMessage");}
 		 s.v();

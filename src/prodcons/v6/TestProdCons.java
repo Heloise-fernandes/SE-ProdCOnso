@@ -14,11 +14,11 @@ public class TestProdCons extends Simulateur {
 	public Consommateur[] listConsommateur;
 	
 	
-	public TestProdCons(Observateur observateur, ProdCons buffer) {
+	public TestProdCons(Observateur observateur, ObservateurV6 observateurV6, ProdCons buffer) {
 		super(observateur);
 		
 		try {
-			observateur.init(nbProd, nbCons, nbBuffer);
+			observateurV6.init(nbProd, nbCons, nbBuffer);
 		} catch (ControlException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -28,7 +28,7 @@ public class TestProdCons extends Simulateur {
 		for(int i =0; i < nbProd; i++)
 		{
 			try {
-				listProducteur[i] = new Producteur(observateur, tempsMoyenProduction, 
+				listProducteur[i] = new Producteur(observateur, observateurV6, tempsMoyenProduction, 
 													deviationNombreMoyenDeProduction, nombreMoyenDeProduction, 
 													deviationNombreMoyenDeProduction, buffer);
 			} catch (ControlException e) {
@@ -40,7 +40,7 @@ public class TestProdCons extends Simulateur {
 		for(int i =0; i < nbCons; i++)
 		{
 			try {
-				listConsommateur[i] = new Consommateur(observateur, tempsMoyenConsommation, 
+				listConsommateur[i] = new Consommateur(observateurV6, observateur, tempsMoyenConsommation, 
 														deviationTempsMoyenConsommation, buffer);
 			} catch (ControlException e) {
 				// TODO Auto-generated catch block
@@ -74,7 +74,7 @@ public class TestProdCons extends Simulateur {
 			init("options.xml");
 		}
 		
-		new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
+		new TestProdCons(new Observateur(), new ObservateurV6(),new ProdCons(nbBuffer,nbProd)).start();
 	}
 	
 	protected static int nbProd;

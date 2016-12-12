@@ -55,7 +55,6 @@ public class ProdCons implements Tampon{
 		mutex.v();
 		
 		
-		System.out.println("Consommateur : "+ arg0.identification()+ " tente notEmpty");
 		notEmpty.p();
 		
 		if(this.nbProd==0)

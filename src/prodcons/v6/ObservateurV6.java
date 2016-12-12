@@ -36,6 +36,7 @@ public class ObservateurV6 {
 		this.s = new Semaphore(1);
 	}
 	
+	/**Savoir si un message est retiré avant les messages mis avant lui*/
 	public boolean estRetireDansBonOrdre(Message m) throws ControlException
 	{
 		long valueDepot = 0;
@@ -44,13 +45,14 @@ public class ObservateurV6 {
 			if(entry.getKey()==m){valueDepot = entry.getValue();}
 		}
 		
+		System.out.println("Value : "+valueDepot);
 		if(valueDepot==0){throw new ControlException(getClass(), "Pas dans la liste de depot"); }
 		
 		for ( HashMap.Entry <Message, Long> entry : this.messageRetrait.entrySet()) {
-			if(valueDepot < entry.getValue()){return false;}
+			if(valueDepot < entry.getValue()){System.out.println("value : "+valueDepot+" other : "+entry.getValue()); return false;}
 		}
 		this.messageRetrait.put(m, valueDepot);
-		
+		this.messageDepot.remove(m);
 		return true;
 	}
 	
@@ -88,7 +90,8 @@ public class ObservateurV6 {
 	 public void consommationMessage(_Consommateur c, Message m, int tempsDeTraitement) throws ControlException{
 		if(c==null||m==null||tempsDeTraitement<=0){ throw new ControlException(getClass(), "consommationMessage");}
 		 s.p();
-		 if(!estRetireDansBonOrdre(m))
+		 System.out.println(this.toString());
+		 if(estRetireDansBonOrdre(m)==false)
 		 {  
 			 s.v();
 			 throw new ControlException(getClass(), "consommationMessage-estretirerdanslebonordre");
@@ -101,10 +104,10 @@ public class ObservateurV6 {
 	  * @param m
 	 * @throws ControlException 
 	  */
-	 public synchronized void depotMessage(_Producteur p, Message m, long l) throws ControlException{
-		 if(p==null||m==null||l<=0){ throw new ControlException(getClass(), "depotMessage");}
+	 public synchronized void depotMessage(_Producteur p, Message m) throws ControlException{
+		 if(p==null||m==null){ throw new ControlException(getClass(), "depotMessage");}
 		 s.p();
-		 if(!estAjouterDansBonOrdre(m,l))
+		 if(!estAjouterDansBonOrdre(m,System.currentTimeMillis()))
 		 {   s.v();
 			 throw new ControlException(getClass(), "depotMessage");}
 		 s.v();

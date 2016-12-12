@@ -9,11 +9,25 @@ import jus.poc.prodcons.Observateur;
 
 public class Consommateur extends Acteur implements _Consommateur {
 	
-
+	/**
+	 * Le nombre de message consommé
+	 */
 	int nbMessage;
+	/**
+	 * Le buffer où l'on doit consommer
+	 */
 	ProdCons buffer;
 	
-	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
+	/**
+	 * Constructeur
+	 * @param observateur Observateur du système
+	 * @param moyenneTempsDeTraitement temps de traitement moyen d'un message
+	 * @param deviationTempsDeTraitement
+	 * @param b le buffer lié
+	 * @throws ControlException
+	 */
+	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	
+			int deviationTempsDeTraitement,ProdCons b) throws ControlException {
 		super(Acteur.typeConsommateur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.buffer = b;
 		this.nbMessage = 0;
@@ -25,6 +39,9 @@ public class Consommateur extends Acteur implements _Consommateur {
 		return nbMessage;
 	}
 
+	/**
+	 * permet d'incrementer le nombre de message lu
+	 */
 	public void incrementer()
 	{
 		this.nbMessage++;
@@ -33,25 +50,21 @@ public class Consommateur extends Acteur implements _Consommateur {
 	@Override
 	public void run() {
 		int aleatoire;
-		while(true) //TODO changer ca
+		while(true)
 		{
 			try 
 			{
 				aleatoire = Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement);
 				Message m = this.buffer.get(this);
 				observateur.retraitMessage(this, m);
-				//TODO : imprimer message + faire genre temps de traitement
 				sleep(aleatoire);
 				observateur.consommationMessage(this, m, aleatoire);
-				
-				System.out.println(m);
 				this.incrementer();
 				
 			}
 			catch (PlusDeProdException e) {break;}
 			catch (Exception e) {e.printStackTrace();}
 		}
-		System.out.println("Fin consomateur"+identification());
 	}
 	
 	

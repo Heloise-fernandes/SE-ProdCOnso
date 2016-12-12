@@ -20,13 +20,14 @@ public class Consommateur extends Acteur implements _Consommateur {
 	
 	/**
 	 * Constructeur
-	 * @param observateur
-	 * @param moyenneTempsDeTraitement
+	 * @param observateur Observateur du système
+	 * @param moyenneTempsDeTraitement temps de traitement moyen d'un message
 	 * @param deviationTempsDeTraitement
 	 * @param b le buffer lié
 	 * @throws ControlException
 	 */
-	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
+	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	
+			int deviationTempsDeTraitement,ProdCons b) throws ControlException {
 		super(Acteur.typeConsommateur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.buffer = b;
 		this.nbMessage = 0;
@@ -59,13 +60,11 @@ public class Consommateur extends Acteur implements _Consommateur {
 			{
 				Message m = this.buffer.get(this);
 				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
-				System.out.println(m);
 				this.incrementer();
 			}
 			catch (PlusDeProdException e) {break;}
 			catch (Exception e) {e.printStackTrace();}
 		}
-		System.out.println("Fin consomateur"+identification());
 	}
 	
 	

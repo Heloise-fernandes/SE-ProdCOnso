@@ -9,19 +9,44 @@ import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
 
-//BUFFER
+
 public class ProdCons implements Tampon{
 
+	/**
+	 * Pointeur sur la prochaine case où ecrire
+	 */
 	private int ecriture;
+	/**
+	 * Poiteur sur la prochaine case où lire
+	 */
 	private int lecture;
+	/**
+	 * Compteur du nombre de producteurs courant
+	 */
 	private int nbProd;
+	/**
+	 * Condition protégant l'écriture dans le buffer
+	 */
 	private Condition notFull;
+	/**
+	 * Condition protégant la lecture dans le buffer
+	 */
 	private Condition notEmpty;
+	/**
+	 * Verrou protégant l'accès aux variables de la classe
+	 */
 	private Lock mutex;
-	//public TestProdCons test;
 	
+	/**
+	 * Tableau représentant le buffer
+	 */
 	private Message[] buffer;
 	
+	/**
+	 * Constructeur d'un buffer cyclique producteur consommateur
+	 * @param tailleBuffer taille du buffer à creer
+	 * @param producteur Nombre de producteur à l'initialisation du système
+	 */
 	public ProdCons(int tailleBuffer, int producteur) 
 	{
 		this.buffer = new Message[tailleBuffer];
@@ -50,21 +75,19 @@ public class ProdCons implements Tampon{
 
 	@Override
 	public Message get(_Consommateur arg0) throws Exception, InterruptedException,PlusDeProdException {
-		
-		
-		System.out.println("Consommateur : "+ arg0.identification()+ " tente lock");
-		
 		mutex.lock();
 		try{
-			
+			/**
+			 * On se bloque si pas de messages à lire
+			 */
 			if((this.buffer[lecture]==null)&&(this.nbProd!=0)){
-				System.out.println("====>Attendre consommateur "+arg0.identification());
 				notEmpty.await();
 			}
-			
+			/**
+			 * Pour la terminaison
+			 */
 			if((this.nbProd==0)&&(this.buffer[lecture]==null))
 			{
-				System.out.println("====>Plus de rien à lire et plus de producteur,consomateur "+arg0.identification());
 				notEmpty.signalAll();
 				throw new PlusDeProdException();
 			}
@@ -72,13 +95,9 @@ public class ProdCons implements Tampon{
 			Message m = this.buffer[lecture];
 			this.buffer[lecture] = null;
 			this.lecture = (lecture + 1) %buffer.length;
-			
-			System.out.println("Consommateur : "+ arg0.identification()+ " signal notFull");
 			notFull.signal();
-			System.out.println("Consommateur : "+ arg0.identification()+ " fait unlock");
 			return m;
 		}finally{
-			System.out.println("====>unlock,consomateur "+arg0.identification());
 			mutex.unlock();
 		}	
 		
@@ -89,12 +108,15 @@ public class ProdCons implements Tampon{
 	public void put(_Producteur arg0, Message arg1) throws Exception,InterruptedException {
 		mutex.lock();
 		try{
-		if(this.buffer[ecriture]!=null){
-			notFull.await();
+			/**
+			 * On se bloque si le buffer est plein
+			 */
+			if(this.buffer[ecriture]!=null){
+				notFull.await();
 		}
-		this.buffer[ecriture]  = arg1;
-		this.ecriture = (ecriture + 1) %buffer.length;
-		notEmpty.signal();
+			this.buffer[ecriture]  = arg1;
+			this.ecriture = (ecriture + 1) %buffer.length;
+			notEmpty.signal();
 		}finally{
 			mutex.unlock();
 		}
@@ -106,18 +128,18 @@ public class ProdCons implements Tampon{
 		return this.buffer.length;
 	}
 	
-	
+	/**
+	 * Decrémente le nombre de producteurs actif restant
+	 */
 	public void decrementeNbProducteur()
 	{
 		mutex.lock();
 		try{
-			
-		this.nbProd--;
-		if(this.nbProd==0)
-		{
-			//notifyAll();
-			notEmpty.signalAll();
-		}
+			this.nbProd--;
+			if(this.nbProd==0)
+			{
+				notEmpty.signalAll();
+			}
 		}finally{
 			mutex.unlock();
 		}

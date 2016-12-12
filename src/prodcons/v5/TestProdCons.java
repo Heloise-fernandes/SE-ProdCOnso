@@ -10,7 +10,28 @@ import jus.poc.prodcons.Simulateur;
 
 public class TestProdCons extends Simulateur {
 
+	/**
+	 * Variables générales à l'application
+	 */
+	protected static int nbProd;
+	protected static int nbCons;
+	protected static int nbBuffer;
+	protected static int tempsMoyenProduction;
+	protected static int deviationTempsMoyenProduction;
+	protected static int tempsMoyenConsommation;
+	protected static int deviationTempsMoyenConsommation;
+	protected static int nombreMoyenDeProduction;
+	protected static int deviationNombreMoyenDeProduction;
+	protected static int nombreMoyenNbExemplaire;
+	protected static int deviationNombreMoyenNbExemplaire;
+	
+	/**
+	 * Liste des producteurs du système
+	 */
 	public Producteur[] listProducteur;
+	/**
+	 * Liste des consommateurs du système
+	 */
 	public Consommateur[] listConsommateur;
 	
 	
@@ -20,10 +41,12 @@ public class TestProdCons extends Simulateur {
 		try {
 			observateur.init(nbProd, nbCons, nbBuffer);
 		} catch (ControlException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
+		/**
+		 * Creation des producteurs
+		 */
 		listProducteur = new Producteur[nbProd];
 		for(int i =0; i < nbProd; i++)
 		{
@@ -32,10 +55,13 @@ public class TestProdCons extends Simulateur {
 													deviationNombreMoyenDeProduction, nombreMoyenDeProduction, 
 													deviationNombreMoyenDeProduction, buffer);
 			} catch (ControlException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		
+		/**
+		 * Création des consommateurs
+		 */
 		listConsommateur = new Consommateur[nbCons];
 		for(int i =0; i < nbCons; i++)
 		{
@@ -43,7 +69,6 @@ public class TestProdCons extends Simulateur {
 				listConsommateur[i] = new Consommateur(observateur, tempsMoyenConsommation, 
 														deviationTempsMoyenConsommation, buffer);
 			} catch (ControlException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -77,17 +102,7 @@ public class TestProdCons extends Simulateur {
 		new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
 	}
 	
-	protected static int nbProd;
-	protected static int nbCons;
-	protected static int nbBuffer;
-	protected static int tempsMoyenProduction;
-	protected static int deviationTempsMoyenProduction;
-	protected static int tempsMoyenConsommation;
-	protected static int deviationTempsMoyenConsommation;
-	protected static int nombreMoyenDeProduction;
-	protected static int deviationNombreMoyenDeProduction;
-	protected static int nombreMoyenNbExemplaire;
-	protected static int deviationNombreMoyenNbExemplaire;
+
 	
 	/**
 	* Retreave the parameters of the application.
@@ -100,23 +115,18 @@ public class TestProdCons extends Simulateur {
 			public int get(String key){return Integer.parseInt(getProperty(key));}
 			public Properties(String file) {
 				String path = System.getProperty("user.dir" );
-				System.out.println(path+File.separatorChar+file);
 				try{
-					//InputStream a = ClassLoader.getSystemResourceAsStream(file);
 					InputStream a = new FileInputStream(path+File.separatorChar+file);
 					loadFromXML(a);
 				}catch(Exception e){
-					//TODO Traitement des erreurs dans le main non ?
 					e.printStackTrace();
 				}
 			}
 		}
-		//optionApp = new Properties("jus/poc/prodcons/options/"+file);
 		Properties optionApp = new Properties( "options"+ File.separatorChar+file);
 		
 		nbProd = optionApp.get("nbProd");
 		nbCons = optionApp.get("nbCons");
-		//TODO C'est quoi nbBuffer ? La taille du buffer ou autre chose ?
 		nbBuffer = optionApp.get("nbBuffer");
 		tempsMoyenProduction = optionApp.get("tempsMoyenProduction");
 		deviationTempsMoyenProduction = optionApp.get("deviationTempsMoyenProduction");

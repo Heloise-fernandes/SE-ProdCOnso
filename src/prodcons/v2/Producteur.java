@@ -9,15 +9,42 @@ import jus.poc.prodcons._Producteur;
 
 public class Producteur extends Acteur implements _Producteur{
 	
+	/**
+	 * Nombre de message à produire
+	 */
 	private int nbMessage;
+	
+	/**
+	 * ID du prochain message à produire
+	 */
 	private int idMsg;
+	
+	/**
+	 * Buffer dans lequel écrire
+	 */
 	private ProdCons buffer;
+	
+	/**
+	 * Nombre de messages écrit par le producteur 
+	 */
 	private int nbMessageEcrit;
 	
-	protected Producteur( Observateur observateur, int moyenneTempsDeTraitement,int deviationTempsDeTraitement, int nbMoyenProducteur, int derivationProd, ProdCons b) throws ControlException {
+	/**
+	 * Constructeur
+	 * @param observateur observateur du système
+	 * @param moyenneTempsDeTraitement temps de production moyen d'un message 
+	 * @param deviationTempsDeTraitement 
+	 * @param nbMoyenProducteur nombre moyen de message à produire
+	 * @param derivationProd 
+	 * @param b buffer
+	 * @throws ControlException
+	 */
+	protected Producteur( Observateur observateur, int moyenneTempsDeTraitement,
+			int deviationTempsDeTraitement, int nbMoyenProducteur, int derivationProd, ProdCons b)
+					throws ControlException {
+		
 		super(Acteur.typeProducteur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		
-		//TODO : Generer nbMessage à produire
 		Aleatoire alea = new Aleatoire(nbMoyenProducteur, derivationProd);
 		this.nbMessage = alea.next()+1;
 		this.buffer = b;
@@ -26,7 +53,6 @@ public class Producteur extends Acteur implements _Producteur{
 
 	@Override
 	public int nombreDeMessages() {
-		
 		return this.nbMessage;
 	}
 	
@@ -42,12 +68,10 @@ public class Producteur extends Acteur implements _Producteur{
 				//On dépose dans le buffer
 				Message m = new MessageX(super.identification(), this.idMsg);
 				this.buffer.put(this, m);
-				
 				this.idMsg++;
 			} catch (Exception e) {e.printStackTrace();}
 		}
 		this.buffer.decrementeNbProducteur();
-		System.out.println("Fin producteur"+identification());
 	}
 
 }

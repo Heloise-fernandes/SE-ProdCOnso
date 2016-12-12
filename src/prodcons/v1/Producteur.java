@@ -36,9 +36,10 @@ public class Producteur extends Acteur implements _Producteur{
 		
 		while(nbMessage - idMsg>0){
 			this.ecrire();
+			//System.out.println("Producteur "+identification()+" toujour en vie");
 		}
 		this.buffer.decrementeNbProducteur();
-		//System.out.println(" - Fin producteur "+identification());
+		System.out.println(" - Fin producteur "+identification());
 	}
 
 	public Message ecrire()

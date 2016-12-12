@@ -50,6 +50,7 @@ public class ProdCons implements Tampon{
 		{
 			if((this.nbProd==0)&&(this.buffer[this.lecture]==null))
 			{
+				notifyAll();
 				throw new PlusDeProdException();
 			}
 			wait();

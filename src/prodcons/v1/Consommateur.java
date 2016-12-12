@@ -59,8 +59,9 @@ public class Consommateur extends Acteur implements _Consommateur {
 			Message m = this.consommer();
 			if(m==null){break;}
 			this.traiter(m);
+			//System.out.println("Consommateur "+identification()+" toujour en vie");
 		}
-		//System.out.println("Fin consomateur"+identification());
+		System.out.println("Fin consomateur"+identification());
 	}
 	/**
 	 * Demande au buffer un message

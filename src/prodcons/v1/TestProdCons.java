@@ -119,12 +119,12 @@ public class TestProdCons extends Simulateur {
 		deviationNombreMoyenNbExemplaire = optionApp.get("deviationNombreMoyenNbExemplaire");
 	}
 	
-	public static boolean begin(String s)
+	public synchronized static boolean begin(String s)
 	{
 		init(s);
 		try {
 			new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
-		} catch (ControlException e) {
+		} catch (Exception e) {
 			return false;
 		}
 		return true;

@@ -1,5 +1,6 @@
 package prodcons.v1;
 
-public class TestProducteurConsomateurJUnit {
+public class TestProducteurConsomateurJUnit 
+{
 
 }

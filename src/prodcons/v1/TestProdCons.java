@@ -12,6 +12,18 @@ import jus.poc.prodcons.Simulateur;
 
 public class TestProdCons extends Simulateur {
 
+	protected static int nbProd;
+	protected static int nbCons;
+	protected static int nbBuffer;
+	protected static int tempsMoyenProduction;
+	protected static int deviationTempsMoyenProduction;
+	protected static int tempsMoyenConsommation;
+	protected static int deviationTempsMoyenConsommation;
+	protected static int nombreMoyenDeProduction;
+	protected static int deviationNombreMoyenDeProduction;
+	protected static int nombreMoyenNbExemplaire;
+	protected static int deviationNombreMoyenNbExemplaire;
+	
 	public Producteur[] listProducteur;
 	public Consommateur[] listConsommateur;
 	
@@ -23,24 +35,15 @@ public class TestProdCons extends Simulateur {
 		for(int i =0; i < nbProd; i++)
 		{
 			try {
-				listProducteur[i] = new Producteur(observateur, tempsMoyenProduction, 
-													deviationNombreMoyenDeProduction, nombreMoyenDeProduction, 
-													deviationNombreMoyenDeProduction, buffer);
-			} catch (ControlException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				listProducteur[i] = new Producteur(observateur, tempsMoyenProduction, deviationNombreMoyenDeProduction, nombreMoyenDeProduction,deviationNombreMoyenDeProduction, buffer);
+			} catch (ControlException e) {e.printStackTrace();}
 		}
 		listConsommateur = new Consommateur[nbCons];
 		for(int i =0; i < nbCons; i++)
 		{
 			try {
-				listConsommateur[i] = new Consommateur(observateur, tempsMoyenConsommation, 
-														deviationTempsMoyenConsommation, buffer);
-			} catch (ControlException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				listConsommateur[i] = new Consommateur(observateur, tempsMoyenConsommation,deviationTempsMoyenConsommation, buffer);
+			} catch (ControlException e) {e.printStackTrace();}
 		}
 		
 		
@@ -57,51 +60,52 @@ public class TestProdCons extends Simulateur {
 			listConsommateur[i].start();
 		}
 		
+		for(int i =0; i < nbProd; i++)
+		{
+			listProducteur[i].join();
+		}
+		for(int i =0; i < nbCons; i++)
+		{
+			listConsommateur[i].join();
+		}
+			
 	}
 	
 	public static void main(String[] args){
+		String s;
 		if (args.length == 2)
 		{
-			init(args[1]);
+			s = args[1];
 		}
 		else
 		{
-			init("options.xml");
+			s = "options.xml";
 		}
 		
-		new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
+		begin(s);
 	}
 	
-	protected static int nbProd;
-	protected static int nbCons;
-	protected static int nbBuffer;
-	protected static int tempsMoyenProduction;
-	protected static int deviationTempsMoyenProduction;
-	protected static int tempsMoyenConsommation;
-	protected static int deviationTempsMoyenConsommation;
-	protected static int nombreMoyenDeProduction;
-	protected static int deviationNombreMoyenDeProduction;
-	protected static int nombreMoyenNbExemplaire;
-	protected static int deviationNombreMoyenNbExemplaire;
 	/**
 	* Retreave the parameters of the application.
 	* @param file the final name of the file containing the options.
 	*/
-	protected static void init(String file) {
+	protected static void init(String file) 
+	{
 		// retreave the parameters of the application
-		final class Properties extends java.util.Properties {
+		final class Properties extends java.util.Properties 
+		{
 			private static final long serialVersionUID = 1L;
+			
 			public int get(String key){return Integer.parseInt(getProperty(key));}
-			public Properties(String file) {
+			
+			public Properties(String file) 
+			{
 				String path = System.getProperty("user.dir" );
 				try{
 					//InputStream a = ClassLoader.getSystemResourceAsStream(file);
 					InputStream a = new FileInputStream(path+File.separatorChar+file);
 					loadFromXML(a);
-				}catch(Exception e){
-					//TODO Traitement des erreurs dans le main non ?
-					e.printStackTrace();
-				}
+				}catch(Exception e){e.printStackTrace();}
 			}
 		}
 		//optionApp = new Properties("jus/poc/prodcons/options/"+file);
@@ -119,6 +123,13 @@ public class TestProdCons extends Simulateur {
 		deviationNombreMoyenDeProduction = optionApp.get("deviationNombreMoyenDeProduction");
 		nombreMoyenNbExemplaire = optionApp.get("nombreMoyenNbExemplaire");
 		deviationNombreMoyenNbExemplaire = optionApp.get("deviationNombreMoyenNbExemplaire");
+	}
+	
+	public static boolean begin(String s)
+	{
+		init(s);
+		new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();
+		return true;
 	}
 
 }

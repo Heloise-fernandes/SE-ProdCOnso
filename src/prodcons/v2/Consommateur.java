@@ -9,34 +9,55 @@ import jus.poc.prodcons.Observateur;
 
 public class Consommateur extends Acteur implements _Consommateur {
 	
-
+	/**
+	 * Le nombre de message consommé
+	 */
 	int nbMessage;
+	/**
+	 * Le buffer où l'on doit consommer
+	 */
 	ProdCons buffer;
 	
+	/**
+	 * Constructeur
+	 * @param observateur
+	 * @param moyenneTempsDeTraitement
+	 * @param deviationTempsDeTraitement
+	 * @param b le buffer lié
+	 * @throws ControlException
+	 */
 	protected Consommateur( Observateur observateur, int moyenneTempsDeTraitement,	int deviationTempsDeTraitement,ProdCons b) throws ControlException {
 		super(Acteur.typeConsommateur, observateur, moyenneTempsDeTraitement, deviationTempsDeTraitement);
 		this.buffer = b;
 		this.nbMessage = 0;
 	}
 
+	/**
+	 * Renvoie le nombre de messages lu par le consommateur
+	 */
 	@Override
 	public int nombreDeMessages() {
 		return nbMessage;
 	}
 
+	/**
+	 * permet d'incrementer le nombre de message lu
+	 */
 	public void incrementer()
 	{
 		this.nbMessage++;
 	}
 	
+	/**
+	 * Coeur de metier du consommateur
+	 */
 	@Override
 	public void run() {
-		while(true) //TODO changer ca
+		while(true)
 		{
 			try 
 			{
 				Message m = this.buffer.get(this);
-				//TODO : imprimer message + faire genre temps de traitement
 				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
 				System.out.println(m);
 				this.incrementer();

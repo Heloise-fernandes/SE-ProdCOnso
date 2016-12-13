@@ -58,6 +58,7 @@ public class Consommateur extends Acteur implements _Consommateur {
 				Message m = this.buffer.get(this);
 				observateur.retraitMessage(this, m);
 				sleep(aleatoire);
+				System.out.println(m);
 				observateur.consommationMessage(this, m, aleatoire);
 				this.incrementer();
 				

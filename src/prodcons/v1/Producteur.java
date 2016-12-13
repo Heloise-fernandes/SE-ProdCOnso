@@ -43,7 +43,6 @@ public class Producteur extends Acteur implements _Producteur{
 			this.ecrire();
 		}
 		this.buffer.decrementeNbProducteur();
-		System.out.println(" - Fin producteur "+identification());
 	}
 
 	/**Fonction qui permet d'écrire un message dans le buffer*/

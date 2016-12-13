@@ -60,6 +60,7 @@ public class Consommateur extends Acteur implements _Consommateur {
 			{
 				Message m = this.buffer.get(this);
 				sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
+				System.out.println(m);
 				this.incrementer();
 			}
 			catch (PlusDeProdException e) {break;}

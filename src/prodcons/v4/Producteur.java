@@ -15,8 +15,6 @@ public class Producteur extends Acteur implements _Producteur{
 	private int idMsg;
 	/**Buffer*/
 	private ProdCons buffer;
-	/**Nombre de message écrit*/
-	private int nbMessageEcrit;
 	
 	/**Construteur*/
 	protected Producteur( Observateur observateur, int moyenneTempsDeTraitement,int deviationTempsDeTraitement, int nbMoyenProducteur, int derivationProd, ProdCons b) throws ControlException {

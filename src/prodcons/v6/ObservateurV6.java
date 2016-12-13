@@ -15,9 +15,6 @@ import jus.poc.prodcons._Producteur;
 public class ObservateurV6 {
 	
 	private boolean coherant = true;
-	private int nbCons;
-	private int nbProd;
-	private int trailleBuf;
 	
 	private HashMap<Message, Long> messageDepot; 
 	private HashMap<Message, Long> messageRetrait; 
@@ -26,9 +23,6 @@ public class ObservateurV6 {
 	
 	public void init(int nbCons, int nbProd, int tailleBuffer) throws ControlException{
 		if(nbCons<=0||nbProd<=0||tailleBuffer<=0){ throw new ControlException(getClass(), "consommationMessage");}
-		this.nbCons = nbCons;
-		this.nbProd = nbProd;
-		this.trailleBuf = tailleBuffer;
 		
 		this.messageDepot = new HashMap<Message, Long>();
 		this.messageRetrait = new HashMap<Message, Long>();

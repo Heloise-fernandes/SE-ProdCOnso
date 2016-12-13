@@ -60,8 +60,8 @@ public class TestProducteurConsomateurJUnit extends TestCase
 	 * TpsProd = 10
 	 * Buff = 10 
 	 * 
-	 * Ici on test la terminaison pour un nombre légerement supérieur
-	 * de consommateur par rapport au nombre de producteur
+	 * Ici on test la terminaison pour un nombre égal de
+	 *  consommateur et de producteur
 	 */
 	public void testSeTermineOption3()
 	{

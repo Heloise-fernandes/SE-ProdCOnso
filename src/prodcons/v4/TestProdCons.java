@@ -3,8 +3,6 @@ package prodcons.v4;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import jus.poc.prodcons.ControlException;
 import jus.poc.prodcons.Observateur;

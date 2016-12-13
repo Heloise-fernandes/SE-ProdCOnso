@@ -25,11 +25,6 @@ public class Producteur extends Acteur implements _Producteur{
 	private ProdCons buffer;
 	
 	/**
-	 * Nombre de messages écrit par le producteur 
-	 */
-	private int nbMessageEcrit;
-	
-	/**
 	 * Constructeur
 	 * @param observateur observateur du système
 	 * @param moyenneTempsDeTraitement temps de production moyen d'un message 

@@ -15,8 +15,6 @@ public class Producteur extends Acteur implements _Producteur{
 	private int idMsg;
 	/**Buffer*/
 	private ProdCons buffer;
-	/**Nombre de message écrit*/
-	private int nbMessageEcrit;
 	/**Observateur*/
 	private ObservateurV6 observateurv6;
 	

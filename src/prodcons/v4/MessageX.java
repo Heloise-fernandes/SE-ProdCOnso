@@ -36,6 +36,6 @@ public class MessageX implements Message{
 	
 	/**Représentation textuelle d'un message*/
 	public String toString(){
-		return "Message : Producteur " + numeroProd +"-" + numeroMessage+"-"+this.multiple;
+		return "Message : Producteur " + numeroProd +"-" + numeroMessage;
 	}
 }

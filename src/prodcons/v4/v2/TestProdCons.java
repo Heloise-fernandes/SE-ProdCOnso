@@ -124,7 +124,7 @@ public class TestProdCons extends Simulateur {
 	public synchronized static boolean begin(String s)
 	{
 		init(s);
-		if(nbProd*(nombreMoyenNbExemplaire+deviationNombreMoyenNbExemplaire)<nbCons)
+		if((nombreMoyenNbExemplaire+deviationNombreMoyenNbExemplaire)<nbCons)
 		{
 			try {
 				new TestProdCons(new Observateur(),new ProdCons(nbBuffer,nbProd)).start();

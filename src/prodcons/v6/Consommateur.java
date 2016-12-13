@@ -94,7 +94,7 @@ public class Consommateur extends Acteur implements _Consommateur {
 		{
 			int aleatoire = Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement);
 			sleep(aleatoire);
-			observateurv6.consommationMessage(this, m, aleatoire);
+			observateurv6.consommationMessage(this,m,aleatoire);
 			System.out.println(m);
 			
 		}

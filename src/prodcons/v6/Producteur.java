@@ -54,14 +54,15 @@ public class Producteur extends Acteur implements _Producteur{
 		try 
 		{
 			//Temps construction message
-			sleep(Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement));
+			int aleatoire =Aleatoire.valeur(moyenneTempsDeTraitement, deviationTempsDeTraitement); 
+			sleep(aleatoire);
 			Message m = new MessageX(super.identification(), this.idMsg);
 			
 			
 			
 			//On dépose dans le buffer
 			this.buffer.put(this, m);
-			observateurv6.depotMessage(this, m);
+			observateurv6.productionMessage(this,m,aleatoire);
 			
 			//on incrémente le nombre de message ajouté au buffer
 			this.idMsg++;

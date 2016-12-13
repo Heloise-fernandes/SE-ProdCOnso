@@ -14,10 +14,10 @@ public class ProdCons implements Tampon{
 	private Semaphore notFull;
 	private Semaphore notEmpty;
 	private Semaphore mutex;
-	
+	private ObservateurV6 observateur;
 	private Message[] buffer;
 	
-	public ProdCons(int tailleBuffer, int producteur) 
+	public ProdCons(int tailleBuffer, int producteur, ObservateurV6 o) 
 	{
 		this.buffer = new Message[tailleBuffer];
 		this.ecriture = 0;
@@ -26,6 +26,7 @@ public class ProdCons implements Tampon{
 		this.notFull = new Semaphore(1);
 		this.notEmpty = new Semaphore(0);
 		this.mutex = new Semaphore(1);
+		this.observateur = o;
 	}
 	
 	@Override
@@ -75,6 +76,7 @@ public class ProdCons implements Tampon{
 		Message m = this.buffer[lecture];
 		this.buffer[lecture] = null;
 		this.lecture = (lecture + 1) %buffer.length;
+		this.observateur.retraitMessage(arg0, m, System.currentTimeMillis());
 		
 		mutex.v();
 		notFull.v();
@@ -89,6 +91,7 @@ public class ProdCons implements Tampon{
 		
 		notFull.p();
 		mutex.p();
+		this.observateur.depotMessage(arg0, arg1, System.currentTimeMillis());
 		this.buffer[ecriture]  = arg1;
 		this.ecriture = (ecriture + 1) %buffer.length;
 		mutex.v();

@@ -37,7 +37,7 @@ public class ObservateurV6 {
 	}
 	
 	/**Savoir si un message est retiré avant les messages mis avant lui*/
-	public boolean estRetireDansBonOrdre(Message m) throws ControlException
+	public boolean estRetireDansBonOrdre(Message m, long tps) throws ControlException
 	{
 		long valueDepot = 0;
 				
@@ -45,14 +45,19 @@ public class ObservateurV6 {
 			if(entry.getKey()==m){valueDepot = entry.getValue();}
 		}
 		
-		System.out.println("Value : "+valueDepot);
-		if(valueDepot==0){throw new ControlException(getClass(), "Pas dans la liste de depot"); }
+		this.messageDepot.remove(m);
+		if(valueDepot==0){throw new ControlException(getClass(), "Pas dans la liste depot"); }
+		
+		for ( HashMap.Entry <Message, Long> entry : this.messageDepot.entrySet()) {
+			if(entry.getValue()<valueDepot){throw new ControlException(getClass(), "retiré trop tot");}
+		}
+		
 		
 		for ( HashMap.Entry <Message, Long> entry : this.messageRetrait.entrySet()) {
-			if(valueDepot < entry.getValue()){System.out.println("value : "+valueDepot+" other : "+entry.getValue()); return false;}
+			if(tps < entry.getValue()){/*System.out.println("value : "+valueDepot+" other : "+entry.getValue());*/ return false;}
 		}
-		this.messageRetrait.put(m, valueDepot);
-		this.messageDepot.remove(m);
+		this.messageRetrait.put(m, tps);
+		
 		return true;
 	}
 	
@@ -89,14 +94,6 @@ public class ObservateurV6 {
      */
 	 public void consommationMessage(_Consommateur c, Message m, int tempsDeTraitement) throws ControlException{
 		if(c==null||m==null||tempsDeTraitement<=0){ throw new ControlException(getClass(), "consommationMessage");}
-		 s.p();
-		 System.out.println(this.toString());
-		 if(estRetireDansBonOrdre(m)==false)
-		 {  
-			 s.v();
-			 throw new ControlException(getClass(), "consommationMessage-estretirerdanslebonordre");
-		 }
-		 s.v();
 	 }
 	 /**
 	  * Evenement correspondant au dépot d'un message dans le tampon  
@@ -104,10 +101,10 @@ public class ObservateurV6 {
 	  * @param m
 	 * @throws ControlException 
 	  */
-	 public synchronized void depotMessage(_Producteur p, Message m) throws ControlException{
+	 public synchronized void depotMessage(_Producteur p, Message m,long l) throws ControlException{
 		 if(p==null||m==null){ throw new ControlException(getClass(), "depotMessage");}
 		 s.p();
-		 if(!estAjouterDansBonOrdre(m,System.currentTimeMillis()))
+		 if(!estAjouterDansBonOrdre(m,l))
 		 {   s.v();
 			 throw new ControlException(getClass(), "depotMessage");}
 		 s.v();
@@ -148,9 +145,16 @@ public class ObservateurV6 {
 	  * @param m
 	 * @throws ControlException 
 	  */
-	 public  void retraitMessage(_Consommateur c, Message m) throws ControlException{
-		 if(c==null||m==null){throw new ControlException(getClass(), "retraitMessage");} 	
-		 
+	 public  void retraitMessage(_Consommateur c, Message m, long l) throws ControlException{
+		 if(c==null||m==null||l<=0){throw new ControlException(getClass(), "retraitMessage");} 	
+		 s.p();
+		 if(estRetireDansBonOrdre(m,l)==false)
+		 {  
+			 //System.out.println(this.toString());
+			 s.v();
+			 throw new ControlException(getClass(), "consommationMessage-estretirerdanslebonordre");
+		 }
+		 s.v();
 	 }
 	           
 

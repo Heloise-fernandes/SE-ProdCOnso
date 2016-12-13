@@ -83,8 +83,8 @@ public class TestProdCons extends Simulateur {
 		{
 			init("options.xml");
 		}
-		
-		new TestProdCons(new Observateur(), new ObservateurV6(),new ProdCons(nbBuffer,nbProd)).start();
+		ObservateurV6 o = new ObservateurV6();
+		new TestProdCons(new Observateur(), o,new ProdCons(nbBuffer,nbProd,o)).start();
 	}
 	
 	
